@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Startups - StartSmart{% endblock %}
+
+{% block content %}
+<h1>Featured Startups</h1>
+<ul>
+    {% for startup in startups %}
+    <li>
+        <strong>{{ startup.name }}</strong> — {{ startup.industry }} <br>
+        <em>{{ startup.location }}</em>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

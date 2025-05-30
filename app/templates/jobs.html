@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs - StartSmart{% endblock %}
+
+{% block content %}
+    <h1>Job Opportunities</h1>
+    <ul>
+        {% for job in jobs %}
+            <li>
+                <strong>{{ job.title }}</strong> at {{ job.company }} — <em>{{ job.location }}</em>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
