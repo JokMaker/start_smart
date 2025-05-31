@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Jobs - StartSmart{% endblock %}
+{% block title %}Job Listings - StartSmart{% endblock %}
 
 {% block content %}
-    <h1>Job Opportunities</h1>
-    <ul>
-        {% for job in jobs %}
-            <li>
-                <strong>{{ job.title }}</strong> at {{ job.company }} — <em>{{ job.location }}</em>
-            </li>
-        {% endfor %}
-    </ul>
+<h2>Available Jobs</h2>
+<div class="job-listings">
+    {% for job in jobs %}
+    <div class="job-card">
+        <h3>{{ job.title }}</h3>
+        <p>{{ job.company }} | {{ job.location }}</p>
+        <p>{{ job.description }}</p>
+        <a href="#" class="btn-primary">Apply Now</a>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

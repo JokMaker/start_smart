@@ -3,13 +3,15 @@
 {% block title %}Startups - StartSmart{% endblock %}
 
 {% block content %}
-<h1>Featured Startups</h1>
-<ul>
+<h2>Available Startups</h2>
+<div class="startup-listings">
     {% for startup in startups %}
-    <li>
-        <strong>{{ startup.name }}</strong> — {{ startup.industry }} <br>
-        <em>{{ startup.location }}</em>
-    </li>
+    <div class="startup-card">
+        <h3>{{ startup.name }}</h3>
+        <p>{{ startup.description }}</p>
+        <p>Founder: {{ startup.founder.username }}</p>
+        <a href="#" class="btn-primary">Join Team</a>
+    </div>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}
