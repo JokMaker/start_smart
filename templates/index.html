@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section text-center py-5">
+    <div class="container">
+        <h1 class="display-4">StartSmart</h1>
+        <p class="lead typing-text" id="typingText">Empowering Youth Through Job Creation & Entrepreneurship</p>
+        <div class="search-hero mt-4">
+            <div class="input-group">
+                <input type="text" class="form-control search-input" placeholder="Search jobs, startups, or skills...">
+                <button class="btn btn-primary search-btn" type="button">🔍 Search</button>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{{ url_for('jobs') }}" class="btn btn-primary btn-lg me-3 pulse-on-hover">Find Jobs</a>
+            <a href="{{ url_for('startups') }}" class="btn btn-outline-light btn-lg pulse-on-hover">Explore Startups</a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="stats-section text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <span class="stat-number" data-target="500">0</span>
+                <p>Active Students</p>
+            </div>
+            <div class="col-md-3">
+                <span class="stat-number" data-target="150">0</span>
+                <p>Job Opportunities</p>
+            </div>
+            <div class="col-md-3">
+                <span class="stat-number" data-target="75">0</span>
+                <p>Startups Created</p>
+            </div>
+            <div class="col-md-3">
+                <span class="stat-number" data-target="200">0</span>
+                <p>Mentorship Sessions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card card-enhanced h-100">
+            <div class="card-body text-center">
+                <div class="mb-3" style="font-size: 3rem;">💼</div>
+                <h5 class="card-title">Job Opportunities</h5>
+                <p class="card-text">Find internships and jobs tailored for African youth</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-enhanced h-100">
+            <div class="card-body text-center">
+                <div class="mb-3" style="font-size: 3rem;">🚀</div>
+                <h5 class="card-title">Startup Hub</h5>
+                <p class="card-text">Launch and showcase your entrepreneurial ventures</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-enhanced h-100">
+            <div class="card-body text-center">
+                <div class="mb-3" style="font-size: 3rem;">🤝</div>
+                <h5 class="card-title">Mentorship</h5>
+                <p class="card-text">Connect with experienced professionals</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

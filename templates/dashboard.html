@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - StartSmart{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-4 mb-4">
+    <div class="container">
+        <h2 class="text-white">Welcome Back! 👋</h2>
+        <p class="text-white">Your journey to success starts here</p>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #667eea;">📊</div>
+                <h4 class="text-primary">5</h4>
+                <p class="mb-0">Applications</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #28a745;">✅</div>
+                <h4 class="text-success">2</h4>
+                <p class="mb-0">Interviews</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #ffc107;">🤝</div>
+                <h4 class="text-warning">3</h4>
+                <p class="mb-0">Mentorship</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #17a2b8;">📚</div>
+                <h4 class="text-info">12</h4>
+                <p class="mb-0">Resources</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center h-100">
+            <div class="card-body">
+                <div style="font-size: 3rem;">💼</div>
+                <h5 class="card-title">Jobs</h5>
+                <p class="card-text">Browse and apply for opportunities</p>
+                <a href="{{ url_for('jobs') }}" class="btn btn-primary pulse-on-hover">View Jobs</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center h-100">
+            <div class="card-body">
+                <div style="font-size: 3rem;">🚀</div>
+                <h5 class="card-title">Startups</h5>
+                <p class="card-text">Explore and join startups</p>
+                <a href="{{ url_for('startups') }}" class="btn btn-primary pulse-on-hover">View Startups</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center h-100">
+            <div class="card-body">
+                <div style="font-size: 3rem;">🤝</div>
+                <h5 class="card-title">Mentorship</h5>
+                <p class="card-text">Connect with mentors</p>
+                <a href="{{ url_for('mentorship') }}" class="btn btn-primary pulse-on-hover">Find Mentors</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center h-100">
+            <div class="card-body">
+                <div style="font-size: 3rem;">📚</div>
+                <h5 class="card-title">Resources</h5>
+                <p class="card-text">Access learning materials</p>
+                <a href="{{ url_for('resources') }}" class="btn btn-primary pulse-on-hover">View Resources</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3" style="font-size: 1.5rem;">📝</div>
+                    <div>
+                        <strong>Applied for Software Developer</strong>
+                        <br><small class="text-muted">2 hours ago</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3" style="font-size: 1.5rem;">🤝</div>
+                    <div>
+                        <strong>Mentorship request sent</strong>
+                        <br><small class="text-muted">1 day ago</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="me-3" style="font-size: 1.5rem;">📚</div>
+                    <div>
+                        <strong>Downloaded Business Plan Template</strong>
+                        <br><small class="text-muted">3 days ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Quick Tips</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>💡 Tip:</strong> Complete your profile to get better job matches!
+                </div>
+                <div class="alert alert-success">
+                    <strong>🎯 Goal:</strong> Apply to 5 jobs this week
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

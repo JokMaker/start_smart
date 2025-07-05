@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - StartSmart{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-4 mb-4">
+    <div class="container">
+        <h2 class="text-white">Admin Dashboard 🛠️</h2>
+        <p class="text-white">Platform Management & Analytics</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #667eea;">👥</div>
+                <h3 class="text-primary">{{ stats.users }}</h3>
+                <p class="mb-0">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #28a745;">💼</div>
+                <h3 class="text-success">{{ stats.jobs }}</h3>
+                <p class="mb-0">Job Postings</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #ffc107;">🚀</div>
+                <h3 class="text-warning">{{ stats.startups }}</h3>
+                <p class="mb-0">Startups</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-enhanced text-center">
+            <div class="card-body">
+                <div style="font-size: 2rem; color: #17a2b8;">📝</div>
+                <h3 class="text-info">{{ stats.applications }}</h3>
+                <p class="mb-0">Applications</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Management Sections -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Users</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in recent_users %}
+                            <tr>
+                                <td>{{ user[0] }}</td>
+                                <td><span class="badge bg-primary">{{ user[2].title() }}</span></td>
+                                <td>{{ user[3][:10] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Jobs</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Company</th>
+                                <th>Posted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in recent_jobs %}
+                            <tr>
+                                <td>{{ job[0] }}</td>
+                                <td>{{ job[1] }}</td>
+                                <td>{{ job[2][:10] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-primary w-100 mb-2">Manage Users</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-success w-100 mb-2">Moderate Jobs</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-warning w-100 mb-2">Review Startups</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-info w-100 mb-2">Export Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

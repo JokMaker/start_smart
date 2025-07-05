@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Resources - StartSmart{% endblock %}
+
+{% block content %}
+<div class="jobs-bg">
+    <div class="container">
+        <h2 class="text-white mb-4">📚 Learning Resources</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 2rem;">📄</div>
+                        <h6>Business Templates</h6>
+                        <small>25+ Templates</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 2rem;">🎥</div>
+                        <h6>Video Tutorials</h6>
+                        <small>50+ Videos</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 2rem;">📊</div>
+                        <h6>Case Studies</h6>
+                        <small>30+ Studies</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 2rem;">💡</div>
+                        <h6>Guides</h6>
+                        <small>40+ Guides</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% set sample_resources = [
+                ('Business Plan Template', 'Complete template for creating professional business plans', 'Templates'),
+                ('Startup Funding Guide', 'Comprehensive guide to securing funding for your startup', 'Guides'),
+                ('Resume Builder', 'Professional resume templates for African job seekers', 'Templates'),
+                ('Interview Preparation', 'Video series on acing job interviews', 'Videos'),
+                ('Market Research Template', 'Tools and templates for conducting market research', 'Templates'),
+                ('Networking Guide', 'How to build professional networks in Africa', 'Guides')
+            ] %}
+            
+            {% for resource in sample_resources %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ resource[0] }}</h5>
+                        <p class="card-text">{{ resource[1] }}</p>
+                        <span class="badge bg-primary">{{ resource[2] }}</span>
+                        <div class="mt-2">
+                            <button class="btn btn-success btn-sm">📥 Download</button>
+                            <button class="btn btn-outline-primary btn-sm">👁️ Preview</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

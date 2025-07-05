@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - StartSmart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <div style="font-size: 4rem; color: #667eea;">👤</div>
+                <h4>{{ user[3] }}</h4>
+                <p class="text-muted">{{ user[4].title() }}</p>
+                <p><strong>Email:</strong> {{ user[1] }}</p>
+                {% if user[7] %}
+                <p><strong>Location:</strong> {{ user[7] }}</p>
+                {% endif %}
+                <button class="btn btn-primary">Edit Profile</button>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6>Skills</h6>
+            </div>
+            <div class="card-body">
+                {% if user[6] %}
+                    {% for skill in user[6].split(',') %}
+                    <span class="badge bg-secondary me-1 mb-1">{{ skill.strip() }}</span>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No skills added yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>About Me</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ user[5] or 'No bio added yet. Tell others about yourself!' }}</p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>My Job Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if applications %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                            <tr>
+                                <td>{{ app[0] }}</td>
+                                <td>{{ app[1] }}</td>
+                                <td>
+                                    <span class="badge bg-warning">{{ app[2].title() }}</span>
+                                </td>
+                                <td>{{ app[3][:10] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No applications yet. <a href="{{ url_for('jobs') }}">Browse jobs</a> to get started!</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h3 class="text-primary">{{ applications|length }}</h3>
+                        <p>Applications</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="text-success">0</h3>
+                        <p>Interviews</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="text-info">0</h3>
+                        <p>Mentorship Sessions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
