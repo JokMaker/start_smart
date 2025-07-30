@@ -3,102 +3,123 @@
 {% block title %}Profile - StartSmart{% endblock %}
 
 {% block content %}
+<div class="hero-section text-center py-4 mb-4">
+    <div class="container">
+        <h2 class="text-white">Your Profile</h2>
+        <p class="text-white">Manage your StartSmart profile</p>
+    </div>
+</div>
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-12 col-lg-4 mb-4">
         <div class="card">
             <div class="card-body text-center">
-                <div style="font-size: 4rem; color: #667eea;">👤</div>
-                <h4>{{ user[3] }}</h4>
-                <p class="text-muted">{{ user[4].title() }}</p>
-                <p><strong>Email:</strong> {{ user[1] }}</p>
-                {% if user[7] %}
-                <p><strong>Location:</strong> {{ user[7] }}</p>
-                {% endif %}
-                <button class="btn btn-primary">Edit Profile</button>
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6>Skills</h6>
-            </div>
-            <div class="card-body">
-                {% if user[6] %}
-                    {% for skill in user[6].split(',') %}
-                    <span class="badge bg-secondary me-1 mb-1">{{ skill.strip() }}</span>
-                    {% endfor %}
+                {% if user[9] %}
+                    <img src="{{ url_for('static', filename='uploads/' + user[9]) }}" 
+                         alt="Profile Image" class="rounded-circle mb-3" 
+                         style="width: 120px; height: 120px; object-fit: cover;">
                 {% else %}
-                    <p class="text-muted">No skills added yet</p>
+                    <div style="font-size: 4rem; color: #667eea;">
+                        {% if session.user_type == 'student' %}🎓
+                        {% elif session.user_type == 'recruiter' %}💼
+                        {% elif session.user_type == 'mentor' %}🏆
+                        {% else %}👤{% endif %}
+                    </div>
                 {% endif %}
+                <h4>{{ user[3] if user[3] else 'No Name Set' }}</h4>
+                <p class="text-muted">{{ user[4].title() if user[4] else 'Unknown' }}</p>
+                <p><strong>Email:</strong> {{ user[1] if user[1] else 'No Email' }}</p>
+                {% if user[7] and user[7] != 'None' %}
+                    <p><strong>Location:</strong> {{ user[7] }}</p>
+                {% endif %}
+                {% if user[8] and session.user_type == 'student' %}
+                    <p><strong>📝 Resume:</strong> <span class="text-success">Uploaded</span></p>
+                {% endif %}
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">Edit Profile</a>
             </div>
         </div>
     </div>
     
-    <div class="col-md-8">
+    <div class="col-12 col-lg-8">
         <div class="card">
             <div class="card-header">
                 <h5>About Me</h5>
             </div>
             <div class="card-body">
-                <p>{{ user[5] or 'No bio added yet. Tell others about yourself!' }}</p>
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5>My Job Applications</h5>
-            </div>
-            <div class="card-body">
-                {% if applications %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Job Title</th>
-                                <th>Company</th>
-                                <th>Status</th>
-                                <th>Applied Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for app in applications %}
-                            <tr>
-                                <td>{{ app[0] }}</td>
-                                <td>{{ app[1] }}</td>
-                                <td>
-                                    <span class="badge bg-warning">{{ app[2].title() }}</span>
-                                </td>
-                                <td>{{ app[3][:10] }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                {% if user[5] and user[5] != 'None' and user[5] != None %}
+                    <p>{{ user[5] }}</p>
                 {% else %}
-                <p class="text-muted">No applications yet. <a href="{{ url_for('jobs') }}">Browse jobs</a> to get started!</p>
+                    <p class="text-muted">No bio added yet. <a href="{{ url_for('edit_profile') }}">Add your bio</a> to tell others about yourself.</p>
+                {% endif %}
+                
+                {% if user[6] and user[6] != 'None' and user[6] != None %}
+                    <h6>
+                        {% if session.user_type == 'student' %}Skills
+                        {% elif session.user_type == 'mentor' %}Expertise Areas
+                        {% elif session.user_type == 'recruiter' %}Industry Focus
+                        {% endif %}
+                    </h6>
+                    <div class="mb-3">
+                        {% for skill in user[6].split(',') %}
+                            <span class="badge bg-primary me-1 mb-1">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if session.user_type == 'student' and applications %}
+                    <h6>Recent Applications</h6>
+                    <div class="list-group">
+                        {% for app in applications[:5] %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ app[0] }}</strong>
+                                <br><small class="text-muted">{{ app[1] }}</small>
+                            </div>
+                            <span class="badge bg-{% if app[2] == 'pending' %}warning{% elif app[2] == 'reviewed' %}info{% elif app[2] == 'shortlisted' %}success{% elif app[2] == 'hired' %}primary{% else %}danger{% endif %}">
+                                {{ app[2].title() }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                        {% if applications|length > 5 %}
+                            <div class="list-group-item text-center">
+                                <a href="{{ url_for('my_applications') }}" class="btn btn-sm btn-outline-primary">View All Applications</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% elif session.user_type == 'student' %}
+                    <div class="alert alert-info">
+                        <strong>No applications yet!</strong> <a href="{{ url_for('jobs') }}">Browse jobs</a> to get started.
+                    </div>
                 {% endif %}
             </div>
         </div>
         
-        <div class="card mt-3">
+        <!-- Profile Completion Tips -->
+        <div class="card mt-4">
             <div class="card-header">
-                <h5>Quick Stats</h5>
+                <h6>Profile Completion</h6>
             </div>
             <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-4">
-                        <h3 class="text-primary">{{ applications|length }}</h3>
-                        <p>Applications</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h3 class="text-success">0</h3>
-                        <p>Interviews</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h3 class="text-info">0</h3>
-                        <p>Mentorship Sessions</p>
-                    </div>
+                <div class="progress mb-2">
+                    {% set completion = 0 %}
+                    {% if user[3] and user[3] != 'None' and user[3] != None %}{% set completion = completion + 20 %}{% endif %}
+                    {% if user[5] and user[5] != 'None' and user[5] != None %}{% set completion = completion + 30 %}{% endif %}
+                    {% if user[6] and user[6] != 'None' and user[6] != None %}{% set completion = completion + 25 %}{% endif %}
+                    {% if user[7] and user[7] != 'None' and user[7] != None %}{% set completion = completion + 15 %}{% endif %}
+                    {% if user[8] and user[8] != 'None' and user[8] != None and session.user_type == 'student' %}{% set completion = completion + 10 %}{% endif %}
+                    <div class="progress-bar bg-primary" style="width: {{ completion }}%">{{ completion }}% Complete</div>
                 </div>
+                <small class="text-muted">
+                    {% if completion < 100 %}
+                        Complete your profile to improve your visibility!
+                        {% if not user[5] or user[5] == 'None' or user[5] == None %} Add a bio.{% endif %}
+                        {% if not user[6] or user[6] == 'None' or user[6] == None %} Add skills/expertise.{% endif %}
+                        {% if not user[7] or user[7] == 'None' or user[7] == None %} Add location.{% endif %}
+                        {% if (not user[8] or user[8] == 'None' or user[8] == None) and session.user_type == 'student' %} Upload resume.{% endif %}
+                    {% else %}
+                        ✅ Your profile is complete!
+                    {% endif %}
+                </small>
             </div>
         </div>
     </div>

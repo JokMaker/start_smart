@@ -1,124 +1,146 @@
-// Real-time search functionality
-let searchTimeout;
+/**
+ * StartSmart Search
+ * JavaScript functionality for search features
+ */
 
-function initializeSearch() {
-    const searchInput = document.getElementById('globalSearch');
-    const searchResults = document.getElementById('searchResults');
+document.addEventListener('DOMContentLoaded', function() {
+    // Global search functionality
+    const globalSearch = document.getElementById('global-search');
     
-    if (!searchInput) return;
-    
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        const query = this.value.trim();
+    if (globalSearch) {
+        const searchInput = globalSearch.querySelector('input');
+        const searchResults = document.getElementById('search-results');
         
-        if (query.length < 2) {
-            searchResults.style.display = 'none';
-            return;
+        if (searchInput && searchResults) {
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                // Clear previous timeout
+                clearTimeout(searchTimeout);
+                
+                // Hide results if query is empty
+                if (!query) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                // Set timeout to prevent too many requests
+                searchTimeout = setTimeout(function() {
+                    // Make API request
+                    fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Clear previous results
+                            searchResults.innerHTML = '';
+                            
+                            // Show results container
+                            searchResults.style.display = 'block';
+                            
+                            // Check if there are results
+                            if (data.results && data.results.length > 0) {
+                                // Create results list
+                                const resultsList = document.createElement('div');
+                                resultsList.className = 'list-group';
+                                
+                                // Add results
+                                data.results.forEach(result => {
+                                    const resultItem = document.createElement('a');
+                                    resultItem.className = 'list-group-item list-group-item-action';
+                                    resultItem.href = getResultUrl(result);
+                                    
+                                    const resultContent = `
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">${result.title}</h6>
+                                            <small class="text-muted">${result.type}</small>
+                                        </div>
+                                        <p class="mb-1">${result.subtitle || ''}</p>
+                                    `;
+                                    
+                                    resultItem.innerHTML = resultContent;
+                                    resultsList.appendChild(resultItem);
+                                });
+                                
+                                searchResults.appendChild(resultsList);
+                            } else {
+                                // Show no results message
+                                searchResults.innerHTML = '<div class="p-3 text-center text-muted">No results found</div>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                            searchResults.innerHTML = '<div class="p-3 text-center text-danger">Error performing search</div>';
+                        });
+                }, 300);
+            });
+            
+            // Close search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!globalSearch.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+            
+            // Helper function to get URL for result
+            function getResultUrl(result) {
+                switch (result.type) {
+                    case 'job':
+                        return `/job/${result.id}`;
+                    case 'startup':
+                        return `/startup/${result.id}`;
+                    case 'mentor':
+                        return `/view-profile/${result.id}`;
+                    default:
+                        return '#';
+                }
+            }
         }
-        
-        searchTimeout = setTimeout(() => {
-            performSearch(query);
-        }, 300);
-    });
-    
-    // Hide results when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            searchResults.style.display = 'none';
-        }
-    });
-}
-
-function performSearch(query) {
-    fetch(`/api/search?q=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-            displaySearchResults(data.results);
-        })
-        .catch(error => {
-            console.error('Search error:', error);
-        });
-}
-
-function displaySearchResults(results) {
-    const searchResults = document.getElementById('searchResults');
-    
-    if (results.length === 0) {
-        searchResults.innerHTML = '<div class="p-3 text-muted">No results found</div>';
-    } else {
-        let html = '';
-        results.forEach(result => {
-            const icon = result.type === 'job' ? '💼' : '🚀';
-            html += `
-                <div class="search-result-item p-2 border-bottom">
-                    <div class="d-flex align-items-center">
-                        <span class="me-2">${icon}</span>
-                        <div>
-                            <div class="fw-bold">${result.title}</div>
-                            <small class="text-muted">${result.subtitle}</small>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        searchResults.innerHTML = html;
     }
     
-    searchResults.style.display = 'block';
-}
-
-// File upload functionality
-function initializeFileUpload() {
-    const fileInput = document.getElementById('resumeUpload');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const uploadStatus = document.getElementById('uploadStatus');
+    // Job search functionality
+    const jobSearchForm = document.getElementById('job-search-form');
     
-    if (!fileInput) return;
-    
-    uploadBtn?.addEventListener('click', function() {
-        const formData = new FormData();
-        const file = fileInput.files[0];
+    if (jobSearchForm) {
+        const searchInput = jobSearchForm.querySelector('input[name="search"]');
+        const locationInput = jobSearchForm.querySelector('input[name="location"]');
+        const jobTypeSelect = jobSearchForm.querySelector('select[name="job_type"]');
         
-        if (!file) {
-            showUploadStatus('Please select a file first', 'error');
-            return;
+        // Update URL with search parameters
+        function updateSearchParams() {
+            const searchParams = new URLSearchParams();
+            
+            if (searchInput && searchInput.value.trim()) {
+                searchParams.set('search', searchInput.value.trim());
+            }
+            
+            if (locationInput && locationInput.value.trim()) {
+                searchParams.set('location', locationInput.value.trim());
+            }
+            
+            if (jobTypeSelect && jobTypeSelect.value) {
+                searchParams.set('job_type', jobTypeSelect.value);
+            }
+            
+            // Update URL without reloading page
+            const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+            window.history.replaceState({}, '', newUrl);
         }
         
-        formData.append('resume', file);
+        // Add event listeners to form elements
+        if (searchInput) {
+            searchInput.addEventListener('input', updateSearchParams);
+        }
         
-        fetch('/upload-resume', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showUploadStatus(data.success, 'success');
-            } else {
-                showUploadStatus(data.error, 'error');
-            }
-        })
-        .catch(error => {
-            showUploadStatus('Upload failed. Please try again.', 'error');
-        });
-    });
-}
-
-function showUploadStatus(message, type) {
-    const uploadStatus = document.getElementById('uploadStatus');
-    if (!uploadStatus) return;
-    
-    uploadStatus.className = `alert alert-${type === 'success' ? 'success' : 'danger'}`;
-    uploadStatus.textContent = message;
-    uploadStatus.style.display = 'block';
-    
-    setTimeout(() => {
-        uploadStatus.style.display = 'none';
-    }, 5000);
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeSearch();
-    initializeFileUpload();
+        if (locationInput) {
+            locationInput.addEventListener('input', updateSearchParams);
+        }
+        
+        if (jobTypeSelect) {
+            jobTypeSelect.addEventListener('change', function() {
+                updateSearchParams();
+                jobSearchForm.submit();
+            });
+        }
+    }
 });

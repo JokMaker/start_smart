@@ -3,143 +3,313 @@
 {% block title %}Dashboard - StartSmart{% endblock %}
 
 {% block content %}
-<div class="hero-section text-center py-4 mb-4">
-    <div class="container">
-        <h2 class="text-white">Welcome Back! 👋</h2>
-        <p class="text-white">Your journey to success starts here</p>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Welcome, {{ user[0] }}!</h1>
+            <p class="lead">Your {{ user[1] }} dashboard</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('profile') }}" class="btn btn-outline-primary">
+                <i class="fas fa-user me-2"></i> View Profile
+            </a>
+        </div>
     </div>
-</div>
 
-<!-- Quick Stats -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center">
-            <div class="card-body">
-                <div style="font-size: 2rem; color: #667eea;">📊</div>
-                <h4 class="text-primary">5</h4>
-                <p class="mb-0">Applications</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center">
-            <div class="card-body">
-                <div style="font-size: 2rem; color: #28a745;">✅</div>
-                <h4 class="text-success">2</h4>
-                <p class="mb-0">Interviews</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center">
-            <div class="card-body">
-                <div style="font-size: 2rem; color: #ffc107;">🤝</div>
-                <h4 class="text-warning">3</h4>
-                <p class="mb-0">Mentorship</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center">
-            <div class="card-body">
-                <div style="font-size: 2rem; color: #17a2b8;">📚</div>
-                <h4 class="text-info">12</h4>
-                <p class="mb-0">Resources</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row">
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center h-100">
-            <div class="card-body">
-                <div style="font-size: 3rem;">💼</div>
-                <h5 class="card-title">Jobs</h5>
-                <p class="card-text">Browse and apply for opportunities</p>
-                <a href="{{ url_for('jobs') }}" class="btn btn-primary pulse-on-hover">View Jobs</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center h-100">
-            <div class="card-body">
-                <div style="font-size: 3rem;">🚀</div>
-                <h5 class="card-title">Startups</h5>
-                <p class="card-text">Explore and join startups</p>
-                <a href="{{ url_for('startups') }}" class="btn btn-primary pulse-on-hover">View Startups</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center h-100">
-            <div class="card-body">
-                <div style="font-size: 3rem;">🤝</div>
-                <h5 class="card-title">Mentorship</h5>
-                <p class="card-text">Connect with mentors</p>
-                <a href="{{ url_for('mentorship') }}" class="btn btn-primary pulse-on-hover">Find Mentors</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card card-enhanced text-center h-100">
-            <div class="card-body">
-                <div style="font-size: 3rem;">📚</div>
-                <h5 class="card-title">Resources</h5>
-                <p class="card-text">Access learning materials</p>
-                <a href="{{ url_for('resources') }}" class="btn btn-primary pulse-on-hover">View Resources</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Activity -->
-<div class="row mt-4">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5>Recent Activity</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="me-3" style="font-size: 1.5rem;">📝</div>
-                    <div>
-                        <strong>Applied for Software Developer</strong>
-                        <br><small class="text-muted">2 hours ago</small>
-                    </div>
+    <!-- Dashboard Stats -->
+    <div class="row g-4 mb-5">
+        {% if user[1] == 'student' %}
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_applications }}</div>
+                    <div class="stat-label">Applications</div>
                 </div>
-                <div class="d-flex align-items-center mb-3">
-                    <div class="me-3" style="font-size: 1.5rem;">🤝</div>
-                    <div>
-                        <strong>Mentorship request sent</strong>
-                        <br><small class="text-muted">1 day ago</small>
-                    </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ pending_applications }}</div>
+                    <div class="stat-label">Pending</div>
                 </div>
-                <div class="d-flex align-items-center">
-                    <div class="me-3" style="font-size: 1.5rem;">📚</div>
-                    <div>
-                        <strong>Downloaded Business Plan Template</strong>
-                        <br><small class="text-muted">3 days ago</small>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ shortlisted_applications }}</div>
+                    <div class="stat-label">Shortlisted</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ skill_match }}%</div>
+                    <div class="stat-label">Job Match</div>
+                    <div class="skill-match-bar mt-2" data-percentage="{{ skill_match }}">
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="{{ skill_match }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5>Quick Tips</h5>
-            </div>
-            <div class="card-body">
-                <div class="alert alert-info">
-                    <strong>💡 Tip:</strong> Complete your profile to get better job matches!
+        {% elif user[1] == 'recruiter' %}
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_jobs }}</div>
+                    <div class="stat-label">Active Jobs</div>
                 </div>
-                <div class="alert alert-success">
-                    <strong>🎯 Goal:</strong> Apply to 5 jobs this week
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_applications }}</div>
+                    <div class="stat-label">Applications</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ pending_applications }}</div>
+                    <div class="stat-label">Pending Review</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ organized_events|length if organized_events else 0 }}</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+        {% elif user[1] == 'mentor' %}
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_requests }}</div>
+                    <div class="stat-label">Mentorship Requests</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ pending_requests }}</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ organized_events|length if organized_events else 0 }}</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">{{ unread_notifications }}</div>
+                    <div class="stat-label">Notifications</div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            {% if user[1] == 'student' %}
+                <!-- Recent Applications -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Recent Applications</h5>
+                        <a href="{{ url_for('my_applications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if recent_applications %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Position</th>
+                                            <th>Company</th>
+                                            <th>Status</th>
+                                            <th>Applied On</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for application in recent_applications %}
+                                            <tr>
+                                                <td>{{ application[0] }}</td>
+                                                <td>{{ application[1] }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ 'warning' if application[2] == 'pending' else 'info' if application[2] == 'reviewed' else 'success' if application[2] == 'shortlisted' else 'danger' if application[2] == 'rejected' else 'primary' }}">
+                                                        {{ application[2]|title }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ application[3]|datetime }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                <h5>No Applications Yet</h5>
+                                <p class="text-muted">Start applying for jobs to see your applications here.</p>
+                                <a href="{{ url_for('jobs') }}" class="btn btn-primary">Browse Jobs</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            {% elif user[1] == 'recruiter' %}
+                <!-- Recent Jobs -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Your Job Postings</h5>
+                        <a href="{{ url_for('post_job_page') }}" class="btn btn-sm btn-primary">Post New Job</a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if recent_jobs %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Position</th>
+                                            <th>Company</th>
+                                            <th>Posted On</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for job in recent_jobs %}
+                                            <tr>
+                                                <td>{{ job[0] }}</td>
+                                                <td>{{ job[1] }}</td>
+                                                <td>{{ job[2]|datetime }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('manage_applications') }}" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-users"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-briefcase fa-3x text-muted mb-3"></i>
+                                <h5>No Jobs Posted Yet</h5>
+                                <p class="text-muted">Start posting jobs to find the perfect candidates.</p>
+                                <a href="{{ url_for('post_job_page') }}" class="btn btn-primary">Post a Job</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            {% elif user[1] == 'mentor' %}
+                <!-- Recent Mentorship Requests -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Mentorship Requests</h5>
+                        <a href="{{ url_for('mentorship') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if recent_requests %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Topic</th>
+                                            <th>Status</th>
+                                            <th>Requested On</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for request in recent_requests %}
+                                            <tr>
+                                                <td>{{ request[0] }}</td>
+                                                <td>{{ request[1] }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ 'warning' if request[2] == 'pending' else 'success' if request[2] == 'accepted' else 'danger' if request[2] == 'rejected' else 'info' }}">
+                                                        {{ request[2]|title }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ request[3]|datetime }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-user-friends fa-3x text-muted mb-3"></i>
+                                <h5>No Mentorship Requests Yet</h5>
+                                <p class="text-muted">When students request mentorship, they'll appear here.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Skill Visualization Card -->
+            {% if user[1] == 'student' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Skill Visualization</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="skillRadarChart" data-skills='{{ skills_data|tojson if skills_data is defined else "[]" }}' data-job-skills='{{ job_skills_data|tojson if job_skills_data is defined else "[]" }}'></canvas>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Profile Card -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5>Quick Actions</h5>
+                    <div class="d-grid gap-2 mt-3">
+                        {% if user[1] == 'student' %}
+                            <a href="{{ url_for('ai_job_matches') }}" class="btn btn-primary">
+                                <i class="fas fa-robot me-2"></i> AI Job Matches
+                            </a>
+                            <a href="{{ url_for('job_map') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-map-marker-alt me-2"></i> Job Map
+                            </a>
+                            <a href="{{ url_for('jobs') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-search me-2"></i> Browse All Jobs
+                            </a>
+                            <a href="{{ url_for('mentorship_calendar') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-calendar-alt me-2"></i> Mentorship Calendar
+                            </a>
+                            <a href="{{ url_for('mentorship') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-user-friends me-2"></i> Find Mentors
+                            </a>
+                        {% elif user[1] == 'recruiter' %}
+                            <a href="{{ url_for('post_job_page') }}" class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i> Post New Job
+                            </a>
+                            <a href="{{ url_for('manage_applications') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-tasks me-2"></i> Manage Applications
+                            </a>
+                        {% elif user[1] == 'mentor' %}
+                            <a href="{{ url_for('mentorship_calendar') }}" class="btn btn-primary">
+                                <i class="fas fa-calendar-alt me-2"></i> Mentorship Calendar
+                            </a>
+                            <a href="{{ url_for('mentorship') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-user-friends me-2"></i> Manage Mentorships
+                            </a>
+                            <a href="{{ url_for('resources') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-upload me-2"></i> Upload Resources
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('resources') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-book me-2"></i> Resources
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/skill-visualization.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,497 @@
+{% extends "base.html" %}
+
+{% block title %}Live Analytics - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Real-time metrics header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-1">📊 Live Platform Analytics</h2>
+                    <p class="text-muted mb-0">Real-time insights into platform activity</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="live-indicator me-3">
+                        <span class="live-dot"></span>
+                        <span class="fw-medium">LIVE</span>
+                    </div>
+                    <span class="text-muted" id="lastUpdate">Updated just now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-time stats cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon bg-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="analytics-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12.5%</span>
+                    </div>
+                </div>
+                <div class="analytics-body">
+                    <h3 class="analytics-number" data-target="{{ analytics.active_users if analytics else 1247 }}">0</h3>
+                    <p class="analytics-label">Active Users</p>
+                    <div class="analytics-progress">
+                        <div class="progress-bar" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon bg-success">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="analytics-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+8.2%</span>
+                    </div>
+                </div>
+                <div class="analytics-body">
+                    <h3 class="analytics-number" data-target="{{ analytics.total_jobs if analytics else 342 }}">0</h3>
+                    <p class="analytics-label">Total Jobs</p>
+                    <div class="analytics-progress">
+                        <div class="progress-bar bg-success" style="width: 68%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon bg-warning">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="analytics-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15.7%</span>
+                    </div>
+                </div>
+                <div class="analytics-body">
+                    <h3 class="analytics-number" data-target="{{ analytics.total_applications if analytics else 89 }}">0</h3>
+                    <p class="analytics-label">Applications</p>
+                    <div class="analytics-progress">
+                        <div class="progress-bar bg-warning" style="width: 89%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-icon bg-info">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="analytics-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+22.1%</span>
+                    </div>
+                </div>
+                <div class="analytics-body">
+                    <h3 class="analytics-number" data-target="{{ analytics.total_startups if analytics else 156 }}">0</h3>
+                    <p class="analytics-label">Total Startups</p>
+                    <div class="analytics-progress">
+                        <div class="progress-bar bg-info" style="width: 92%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Charts Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="analytics-chart-card">
+                <div class="chart-header">
+                    <h4 class="fw-bold">📈 User Activity Timeline</h4>
+                    <div class="chart-controls">
+                        <button class="btn btn-sm btn-outline-primary active" data-period="24h">24H</button>
+                        <button class="btn btn-sm btn-outline-primary" data-period="7d">7D</button>
+                        <button class="btn btn-sm btn-outline-primary" data-period="30d">30D</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="activityChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="analytics-chart-card">
+                <div class="chart-header">
+                    <h4 class="fw-bold">🌍 User Distribution</h4>
+                </div>
+                <div class="chart-container">
+                    <canvas id="distributionChart" width="300" height="300"></canvas>
+                </div>
+                <div class="country-stats mt-3">
+                    <div class="country-item">
+                        <div class="country-flag">🇳🇬</div>
+                        <div class="country-info">
+                            <span class="country-name">Nigeria</span>
+                            <span class="country-percentage">34.2%</span>
+                        </div>
+                    </div>
+                    <div class="country-item">
+                        <div class="country-flag">🇰🇪</div>
+                        <div class="country-info">
+                            <span class="country-name">Kenya</span>
+                            <span class="country-percentage">22.8%</span>
+                        </div>
+                    </div>
+                    <div class="country-item">
+                        <div class="country-flag">🇿🇦</div>
+                        <div class="country-info">
+                            <span class="country-name">South Africa</span>
+                            <span class="country-percentage">18.5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Feed -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="activity-feed-card">
+                <div class="feed-header">
+                    <h4 class="fw-bold">🔄 Live Activity Feed</h4>
+                    <span class="badge bg-success">Real-time</span>
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                    <!-- Dynamic activity items will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="trending-card">
+                <div class="trending-header">
+                    <h4 class="fw-bold">🔥 Trending Now</h4>
+                </div>
+                <div class="trending-items">
+                    <div class="trending-item">
+                        <div class="trending-icon">💼</div>
+                        <div class="trending-content">
+                            <h6>Software Developer Jobs</h6>
+                            <p class="text-muted mb-0">+45% increase in applications</p>
+                        </div>
+                        <div class="trending-badge">
+                            <span class="badge bg-primary">Hot</span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-icon">🚀</div>
+                        <div class="trending-content">
+                            <h6>FinTech Startups</h6>
+                            <p class="text-muted mb-0">Most viewed category today</p>
+                        </div>
+                        <div class="trending-badge">
+                            <span class="badge bg-warning">Trending</span>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-icon">🎓</div>
+                        <div class="trending-content">
+                            <h6>UI/UX Mentorship</h6>
+                            <p class="text-muted mb-0">High demand skill area</p>
+                        </div>
+                        <div class="trending-badge">
+                            <span class="badge bg-success">Popular</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Analytics-specific styles */
+.live-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.analytics-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.analytics-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.analytics-trend {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.analytics-trend i {
+    margin-right: 4px;
+}
+
+.analytics-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #1f2937;
+}
+
+.analytics-label {
+    color: #6b7280;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.analytics-progress {
+    height: 4px;
+    background: #f3f4f6;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: width 1s ease;
+}
+
+.analytics-chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.country-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.country-flag {
+    font-size: 1.5rem;
+    margin-right: 12px;
+}
+
+.country-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.country-percentage {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.activity-feed-card, .trending-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: 100%;
+}
+
+.feed-header, .trending-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.trending-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.trending-icon {
+    font-size: 1.5rem;
+    margin-right: 16px;
+}
+
+.trending-content {
+    flex: 1;
+}
+
+.trending-content h6 {
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+</style>
+
+<script>
+// Simulate real-time data updates
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize charts (placeholder for Chart.js integration)
+    initializeCharts();
+    
+    // Start number animations
+    animateNumbers();
+    
+    // Start real-time activity simulation
+    startActivitySimulation();
+    
+    // Update timestamp every minute
+    updateTimestamp();
+    setInterval(updateTimestamp, 60000);
+});
+
+function animateNumbers() {
+    const numbers = document.querySelectorAll('.analytics-number');
+    
+    numbers.forEach(number => {
+        const target = parseInt(number.getAttribute('data-target'));
+        const increment = target / 100;
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            number.textContent = Math.floor(current).toLocaleString();
+        }, 20);
+    });
+}
+
+function initializeCharts() {
+    // Placeholder for Chart.js implementation
+    console.log('Charts initialized');
+}
+
+function startActivitySimulation() {
+    const activities = [
+        { icon: '👤', text: 'New user John Doe registered from Lagos', time: 'Just now' },
+        { icon: '💼', text: 'Software Engineer position posted by TechCorp', time: '2 mins ago' },
+        { icon: '🤝', text: 'Mentorship session booked: UI/UX Design', time: '5 mins ago' },
+        { icon: '🚀', text: 'New startup "EduTech Solutions" launched', time: '8 mins ago' },
+        { icon: '📝', text: 'Job application submitted for Data Analyst role', time: '12 mins ago' }
+    ];
+    
+    const feed = document.getElementById('activityFeed');
+    
+    function addActivity() {
+        const activity = activities[Math.floor(Math.random() * activities.length)];
+        const activityElement = document.createElement('div');
+        activityElement.className = 'activity-item';
+        activityElement.innerHTML = `
+            <div style="font-size: 1.25rem; margin-right: 12px;">${activity.icon}</div>
+            <div style="flex: 1;">
+                <p style="margin-bottom: 4px; font-weight: 500;">${activity.text}</p>
+                <small class="text-muted">${activity.time}</small>
+            </div>
+        `;
+        
+        feed.insertBefore(activityElement, feed.firstChild);
+        
+        // Keep only latest 5 activities
+        while (feed.children.length > 5) {
+            feed.removeChild(feed.lastChild);
+        }
+    }
+    
+    // Add initial activities
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => addActivity(), i * 1000);
+    }
+    
+    // Continue adding activities every 10 seconds
+    setInterval(addActivity, 10000);
+}
+
+function updateTimestamp() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    document.getElementById('lastUpdate').textContent = `Updated at ${timeString}`;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Job - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-edit me-2"></i>Edit Job</h3>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('edit_job', job_id=job[0]) }}" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Job Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="title" required value="{{ job[1] }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Company <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="company" required value="{{ job[2] }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Job Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="description" rows="6" required>{{ job[3] }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="location" required value="{{ job[4] }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Salary Range</label>
+                            <input type="text" class="form-control" name="salary" value="{{ job[5] or '' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Work Arrangement <span class="text-danger">*</span></label>
+                            <select class="form-select" name="job_type" required>
+                                <option value="">Select work arrangement...</option>
+                                <option value="full-time" {{ 'selected' if job[6] == 'full-time' }}>Full-time</option>
+                                <option value="part-time" {{ 'selected' if job[6] == 'part-time' }}>Part-time</option>
+                                <option value="internship" {{ 'selected' if job[6] == 'internship' }}>Internship</option>
+                                <option value="contract" {{ 'selected' if job[6] == 'contract' }}>Contract</option>
+                                <option value="remote" {{ 'selected' if job[6] == 'remote' }}>Remote</option>
+                                <option value="hybrid" {{ 'selected' if job[6] == 'hybrid' }}>Hybrid</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Requirements <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="requirements" rows="4" required>{{ job[9] or '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Benefits & Perks</label>
+                            <textarea class="form-control" name="benefits" rows="3">{{ job[10] or '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Application Deadline</label>
+                            <input type="date" class="form-control" name="deadline" value="{{ job[12] or '' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Application URL <span class="text-danger">*</span></label>
+                            <input type="url" class="form-control" name="application_url" required value="{{ job[11] or '' }}">
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Update Job
+                            </button>
+                            <a href="{{ url_for('jobs') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

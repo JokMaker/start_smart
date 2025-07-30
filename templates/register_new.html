@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Register - StartSmart{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card auth-card">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-user-plus auth-icon"></i>
+                            <h2 class="fw-bold mb-2">Create Your Account</h2>
+                            <p class="text-muted">Join the StartSmart community today</p>
+                        </div>
+                        
+                        <!-- Flash Messages -->
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <div class="mb-4">
+                                    {% for message in messages %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="fas fa-exclamation-circle me-2"></i>{{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        
+                        <form method="POST" action="{{ url_for('register') }}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating-modern mb-4">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder=" " required>
+                                        <label for="name"><i class="fas fa-user me-2"></i>Full Name</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-floating-modern mb-4">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
+                                        <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating-modern mb-4">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder=" " required>
+                                        <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-floating-modern mb-4">
+                                        <select class="form-select custom-select" id="user_type" name="user_type" required>
+                                            <option value="">Select...</option>
+                                            <option value="student">Student</option>
+                                            <option value="mentor">Mentor</option>
+                                            <option value="recruiter">Recruiter</option>
+                                        </select>
+                                        <label for="user_type"><i class="fas fa-user-tag me-2"></i>I am a</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-gradient w-100 py-2 mb-4">Create Account</button>
+                            
+                            <div class="text-center">
+                                <p>Already have an account? <a href="{{ url_for('login') }}" class="text-primary fw-bold">Login here</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle floating labels for select elements
+document.addEventListener('DOMContentLoaded', function() {
+    const selectElements = document.querySelectorAll('.form-floating-modern select');
+    
+    selectElements.forEach(select => {
+        // Function to update label position
+        function updateLabel() {
+            const label = select.nextElementSibling;
+            if (select.value && select.value !== '') {
+                label.style.top = '0';
+                label.style.fontSize = '0.8rem';
+                label.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--light').trim();
+            } else {
+                label.style.top = '50%';
+                label.style.fontSize = '1rem';
+                label.style.backgroundColor = 'transparent';
+            }
+        }
+        
+        // Update on change
+        select.addEventListener('change', updateLabel);
+        
+        // Update on page load if option is selected
+        updateLabel();
+        
+        // Handle focus/blur for consistent behavior
+        select.addEventListener('focus', function() {
+            const label = this.nextElementSibling;
+            label.style.top = '0';
+            label.style.fontSize = '0.8rem';
+            label.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--light').trim();
+        });
+        
+        select.addEventListener('blur', function() {
+            if (!this.value || this.value === '') {
+                const label = this.nextElementSibling;
+                label.style.top = '50%';
+                label.style.fontSize = '1rem';
+                label.style.backgroundColor = 'transparent';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

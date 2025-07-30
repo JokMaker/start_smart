@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Notifications</h1>
+            <p class="lead">Stay updated with your latest activities</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('mark_all_read') }}" class="btn btn-outline-primary">
+                <i class="fas fa-check-double"></i> Mark All as Read
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            {% if notifications %}
+                <div class="list-group list-group-flush">
+                    {% for notification in notifications %}
+                        <div class="list-group-item list-group-item-action {% if not notification[4] %}list-group-item-light{% endif %}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">
+                                    {% if not notification[4] %}
+                                        <span class="badge bg-primary me-2">New</span>
+                                    {% endif %}
+                                    
+                                    {% if notification[2] == 'application' %}
+                                        <i class="fas fa-file-alt text-primary"></i>
+                                    {% elif notification[2] == 'status_change' %}
+                                        <i class="fas fa-sync-alt text-warning"></i>
+                                    {% elif notification[2] == 'new_job' %}
+                                        <i class="fas fa-briefcase text-success"></i>
+                                    {% elif notification[2] == 'new_event' %}
+                                        <i class="fas fa-calendar-alt text-info"></i>
+                                    {% elif notification[2] == 'mentorship' %}
+                                        <i class="fas fa-user-friends text-secondary"></i>
+                                    {% elif notification[2] == 'skill_request' %}
+                                        <i class="fas fa-award text-danger"></i>
+                                    {% else %}
+                                        <i class="fas fa-bell text-muted"></i>
+                                    {% endif %}
+                                    
+                                    {{ notification[1] }}
+                                </h6>
+                                <small class="text-muted">{{ notification[5]|datetime('%b %d, %Y - %I:%M %p') }}</small>
+                            </div>
+                            
+                            <div class="mt-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if notification[2] == 'application' and notification[3] %}
+                                        <a href="{{ url_for('job_details', job_id=notification[3]) }}" class="btn btn-sm btn-outline-primary">
+                                            View Job
+                                        </a>
+                                    {% elif notification[2] == 'status_change' and notification[3] %}
+                                        <a href="{{ url_for('my_applications') }}" class="btn btn-sm btn-outline-primary">
+                                            View Application
+                                        </a>
+                                    {% elif notification[2] == 'new_job' and notification[3] %}
+                                        <a href="{{ url_for('job_details', job_id=notification[3]) }}" class="btn btn-sm btn-outline-primary">
+                                            View Job
+                                        </a>
+                                    {% elif notification[2] == 'new_event' and notification[3] %}
+                                        <a href="{{ url_for('event_details', event_id=notification[3]) }}" class="btn btn-sm btn-outline-primary">
+                                            View Event
+                                        </a>
+                                    {% elif notification[2] == 'mentorship' and notification[3] %}
+                                        <a href="{{ url_for('mentorship') }}" class="btn btn-sm btn-outline-primary">
+                                            View Mentorship
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if not notification[4] %}
+                                    <a href="{{ url_for('mark_read', notification_id=notification[0]) }}" class="btn btn-sm btn-link text-muted">
+                                        Mark as Read
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                    <h5>No Notifications</h5>
+                    <p class="text-muted">You don't have any notifications at the moment.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

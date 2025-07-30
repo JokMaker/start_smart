@@ -1,47 +1,549 @@
 {% extends "base.html" %}
 
-{% block title %}Register - StartSmart{% endblock %}
+{% block title %}Join StartSmart - Create Your Account{% endblock %}
 
 {% block content %}
-<div class="login-bg d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Join StartSmart</h3>
+<div class="auth-wrapper">
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Left Side - Branding & Features -->
+            <div class="col-lg-6 d-none d-lg-flex auth-left-panel">
+                <div class="auth-content">
+                    <div class="auth-brand mb-5">
+                        <h1 class="brand-title">StartSmart</h1>
+                        <p class="brand-subtitle">Your Gateway to Professional Success</p>
                     </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Career Opportunities</h4>
+                                <p>Connect with top companies and discover your dream job</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Expert Mentorship</h4>
+                                <p>Learn from industry professionals and accelerate your growth</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Startup Ecosystem</h4>
+                                <p>Join innovative startups and build the future</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+            </div>
+            
+            <!-- Right Side - Registration Form -->
+            <div class="col-lg-6 auth-right-panel">
+                <div class="auth-form-container">
+                    <div class="auth-header text-center mb-4">
+                        <h2 class="auth-title">Create Your Account</h2>
+                        <p class="auth-subtitle">Join thousands of professionals today</p>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="user_type" class="form-label">I am a:</label>
-                        <select class="form-select" id="user_type" name="user_type" required>
-                            <option value="">Select...</option>
-                            <option value="student">Student</option>
-                            <option value="mentor">Mentor</option>
-                            <option value="recruiter">Recruiter</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
-                <div class="text-center mt-3">
-                    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
-                    </div>
+                    
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="alerts-container mb-4">
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show custom-alert" role="alert">
+                                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('register') }}" class="auth-form" id="registerForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating-modern">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="name" 
+                                           name="name" 
+                                           placeholder=" " 
+                                           required
+                                           pattern="[A-Za-z\s]{2,50}"
+                                           title="Name should contain only letters and spaces (2-50 characters)">
+                                    <label for="name">
+                                        <i class="fas fa-user me-2"></i>Full Name
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid name (2-50 characters, letters only)
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating-modern">
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           name="email" 
+                                           placeholder=" " 
+                                           required>
+                                    <label for="email">
+                                        <i class="fas fa-envelope me-2"></i>Email Address
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid email address
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating-modern">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           placeholder=" " 
+                                           required
+                                           minlength="8"
+                                           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                           title="Password must be at least 8 characters with uppercase, lowercase, number and special character">
+                                    <label for="password">
+                                        <i class="fas fa-lock me-2"></i>Password
+                                    </label>
+                                    <div class="password-strength" id="passwordStrength"></div>
+                                    <div class="invalid-feedback">
+                                        Password must be at least 8 characters with uppercase, lowercase, number and special character
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating-modern">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirmPassword" 
+                                           name="confirmPassword" 
+                                           placeholder=" " 
+                                           required>
+                                    <label for="confirmPassword">
+                                        <i class="fas fa-shield-alt me-2"></i>Confirm Password
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Passwords must match
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-floating-modern">
+                                <select class="form-select" id="user_type" name="user_type" required>
+                                    <option value="">Choose your role...</option>
+                                    <option value="student">🎓 Student - Looking for opportunities</option>
+                                    <option value="mentor">👨‍🏫 Mentor - Share knowledge & guide others</option>
+                                    <option value="recruiter">💼 Recruiter - Find talent for your company</option>
+                                </select>
+                                <label for="user_type">
+                                    <i class="fas fa-user-tag me-2"></i>I am a
+                                </label>
+                                <div class="invalid-feedback">
+                                    Please select your role
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-4 submit-btn">
+                            <span class="btn-text">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </span>
+                            <span class="btn-loading d-none">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Creating Account...
+                            </span>
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Already have an account? 
+                                <a href="{{ url_for('login') }}" class="text-primary fw-bold">Sign In</a>
+                            </p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+.auth-wrapper {
+    background: var(--primary-gradient);
+    min-height: 100vh;
+}
+
+.auth-left-panel {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.auth-content {
+    max-width: 500px;
+    color: white;
+}
+
+.brand-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #fff, #e0e0e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateX(10px);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    margin-right: 1.5rem;
+    color: #fff;
+    min-width: 60px;
+}
+
+.feature-content h4 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.feature-content p {
+    margin: 0;
+    opacity: 0.8;
+}
+
+.auth-right-panel {
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.auth-form-container {
+    max-width: 500px;
+    width: 100%;
+}
+
+.auth-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.form-floating-modern {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.form-floating-modern .form-control,
+.form-floating-modern .form-select {
+    height: 60px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    color: #212529; /* Ensure text is black */
+}
+
+.form-floating-modern .form-control:focus,
+.form-floating-modern .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    background-color: white;
+    color: #212529; /* Ensure text stays black on focus */
+}
+
+.form-floating-modern label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background: transparent;
+    padding: 0 0.5rem;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+.form-floating-modern .form-control::placeholder,
+.form-floating-modern .form-select::placeholder {
+    color: #6c757d;
+    opacity: 0.7;
+}
+
+.form-floating-modern .form-control:focus ~ label,
+.form-floating-modern .form-control:not(:placeholder-shown) ~ label,
+.form-floating-modern .form-select:focus ~ label,
+.form-floating-modern .form-select:not([value=""]) ~ label {
+    top: 0;
+    font-size: 0.85rem;
+    color: #667eea;
+    background: white;
+    font-weight: 600;
+}
+
+.password-strength {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.password-strength.weak {
+    background: var(--danger-color);
+    width: 25%;
+}
+
+.password-strength.medium {
+    background: var(--warning-color);
+    width: 50%;
+}
+
+.password-strength.strong {
+    background: var(--info-color);
+    width: 75%;
+}
+
+.password-strength.very-strong {
+    background: var(--success-color);
+    width: 100%;
+}
+
+.custom-checkbox .form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.submit-btn {
+    height: 60px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: var(--primary-gradient);
+    border: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.custom-alert {
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+}
+
+.terms-link {
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.terms-link:hover {
+    color: #5a6fd8 !important;
+    text-decoration: none;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--danger-color);
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: var(--success-color);
+}
+
+@media (max-width: 991.98px) {
+    .auth-wrapper {
+        background: white;
+    }
+    
+    .auth-right-panel {
+        background: var(--primary-gradient);
+        color: white;
+    }
+    
+    .auth-title,
+    .auth-subtitle {
+        color: white;
+    }
+    
+    .form-floating-modern .form-control,
+    .form-floating-modern .form-select {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-color: rgba(255, 255, 255, 0.8);
+        color: #212529; /* Black text for readability */
+    }
+    
+    .form-floating-modern .form-control::placeholder,
+    .form-floating-modern .form-select option {
+        color: #6c757d; /* Gray placeholder text */
+    }
+    
+    .form-floating-modern label {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-floating-modern .form-control:focus ~ label,
+    .form-floating-modern .form-control:not(:placeholder-shown) ~ label,
+    .form-floating-modern .form-select:focus ~ label,
+    .form-floating-modern .form-select:not([value=""]) ~ label {
+        background: rgba(255, 255, 255, 0.95);
+        color: #667eea;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const strengthIndicator = document.getElementById('passwordStrength');
+    const submitBtn = form.querySelector('.submit-btn');
+    
+    // Password strength checker
+    password.addEventListener('input', function() {
+        const value = this.value;
+        const strength = checkPasswordStrength(value);
+        strengthIndicator.className = 'password-strength ' + strength.class;
+    });
+    
+    // Confirm password validation
+    confirmPassword.addEventListener('input', function() {
+        if (this.value !== password.value) {
+            this.setCustomValidity("Passwords do not match");
+            this.classList.add('is-invalid');
+        } else {
+            this.setCustomValidity("");
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+    
+    // Simple form submission - no interference
+    form.addEventListener('submit', function(e) {
+        if (form.checkValidity()) {
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            if (btnText && btnLoading) {
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+                submitBtn.disabled = true;
+            }
+        }
+    });
+    
+    // Real-time validation feedback
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+});
+
+function checkPasswordStrength(password) {
+    let strength = { class: '', text: '' };
+    const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+    if (strongRegex.test(password)) {
+        strength = { class: 'very-strong', text: 'Very Strong' };
+    } else if (mediumRegex.test(password)) {
+        strength = { class: 'strong', text: 'Strong' };
+    } else if (password.length > 8) {
+        strength = { class: 'medium', text: 'Medium' };
+    } else if (password.length > 0) {
+        strength = { class: 'weak', text: 'Weak' };
+    }
+    return strength;
+}
+</script>
+
+<!-- Enhanced Form Validation -->
+<script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
 {% endblock %}

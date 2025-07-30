@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Job Applications</h2>
+    
+    {% if applications %}
+        <div class="row">
+            {% for app in applications %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ app[1] }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ app[2] }}</h6>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                📍 {{ app[3] }} • {{ app[4].title() }}
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-{% if app[5] == 'pending' %}warning{% elif app[5] == 'reviewed' %}info{% elif app[5] == 'shortlisted' %}success{% elif app[5] == 'hired' %}primary{% else %}danger{% endif %}">
+                                {{ app[5].title() }}
+                            </span>
+                            <small class="text-muted">Applied: {{ app[6][:10] }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4>No Applications Yet</h4>
+            <p>You haven't applied for any jobs yet. <a href="{{ url_for('jobs') }}">Browse available jobs</a> to get started!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -3,134 +3,316 @@
 {% block title %}Jobs - StartSmart{% endblock %}
 
 {% block content %}
-<div class="jobs-bg">
+<div class="page-header">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-white">Job Opportunities</h2>
-            {% if session.user_type == 'recruiter' %}
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#postJobModal">Post Job</button>
-            {% endif %}
-        </div>
-        
-        <!-- Search and Filter Bar -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <form method="GET" class="d-flex gap-2">
-                    <input type="text" class="form-control" name="search" placeholder="Search jobs..." value="{{ search or '' }}">
-                    <input type="text" class="form-control" name="location" placeholder="Location" value="{{ location or '' }}">
-                    <select class="form-select" name="job_type">
-                        <option value="">All Types</option>
-                        <option value="full-time" {{ 'selected' if job_type == 'full-time' }}>Full-time</option>
-                        <option value="part-time" {{ 'selected' if job_type == 'part-time' }}>Part-time</option>
-                        <option value="internship" {{ 'selected' if job_type == 'internship' }}>Internship</option>
-                        <option value="contract" {{ 'selected' if job_type == 'contract' }}>Contract</option>
-                        <option value="remote" {{ 'selected' if job_type == 'remote' }}>Remote</option>
-                        <option value="hybrid" {{ 'selected' if job_type == 'hybrid' }}>Hybrid</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary">🔍 Search</button>
-                </form>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Jobs</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">
+                    <i class="fas fa-briefcase me-3"></i>Job Opportunities
+                </h1>
+                <p class="page-subtitle">Discover amazing career opportunities across Africa</p>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+                {% if session.user_type == 'recruiter' %}
+                    <a href="{{ url_for('post_job_page') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-plus me-2"></i>Post Job
+                    </a>
+                {% endif %}
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="row">
+<div class="container">
+        
+    <!-- Search and Filter Bar -->
+    <div class="filter-container mb-4">
+        <form method="GET">
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <div class="form-floating-modern">
+                        <input type="text" name="search" placeholder=" " value="{{ search or '' }}">
+                        <label><i class="fas fa-search me-2"></i>Search jobs...</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="form-floating-modern">
+                        <input type="text" name="location" placeholder=" " value="{{ location or '' }}">
+                        <label><i class="fas fa-map-marker-alt me-2"></i>Location</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="form-floating-modern">
+                        <select class="form-select custom-select" name="job_type">
+                            <option value="">All Types</option>
+                            <option value="full-time" {{ 'selected' if job_type == 'full-time' }}>Full-time</option>
+                            <option value="part-time" {{ 'selected' if job_type == 'part-time' }}>Part-time</option>
+                            <option value="internship" {{ 'selected' if job_type == 'internship' }}>Internship</option>
+                            <option value="contract" {{ 'selected' if job_type == 'contract' }}>Contract</option>
+                            <option value="remote" {{ 'selected' if job_type == 'remote' }}>Remote</option>
+                            <option value="hybrid" {{ 'selected' if job_type == 'hybrid' }}>Hybrid</option>
+                        </select>
+                        <label><i class="fas fa-briefcase me-2"></i>Job Type</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-2">
+                    <button type="submit" class="btn btn-gradient w-100 h-100">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filter-tags mt-3">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="filter-label">Popular filters:</span>
+                    <a href="?job_type=remote" class="filter-tag">Remote</a>
+                    <a href="?job_type=internship" class="filter-tag">Internships</a>
+                    <a href="?location=Lagos" class="filter-tag">Lagos</a>
+                    <a href="?location=Nairobi" class="filter-tag">Nairobi</a>
+                    <a href="?search=developer" class="filter-tag">Developer</a>
+                    <a href="?search=marketing" class="filter-tag">Marketing</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Jobs List -->
+    <div class="row">
+        <div class="col-lg-3 order-lg-1 order-2">
+            <div class="sidebar-container">
+                <div class="sidebar-widget">
+                    <h5 class="sidebar-title">Job Categories</h5>
+                    <div class="category-list">
+                        <a href="?search=technology" class="category-item">
+                            <i class="fas fa-laptop-code me-2"></i> Technology
+                            <span class="category-count">24</span>
+                        </a>
+                        <a href="?search=marketing" class="category-item">
+                            <i class="fas fa-bullhorn me-2"></i> Marketing
+                            <span class="category-count">18</span>
+                        </a>
+                        <a href="?search=finance" class="category-item">
+                            <i class="fas fa-chart-line me-2"></i> Finance
+                            <span class="category-count">15</span>
+                        </a>
+                        <a href="?search=healthcare" class="category-item">
+                            <i class="fas fa-heartbeat me-2"></i> Healthcare
+                            <span class="category-count">12</span>
+                        </a>
+                        <a href="?search=education" class="category-item">
+                            <i class="fas fa-graduation-cap me-2"></i> Education
+                            <span class="category-count">10</span>
+                        </a>
+                        <a href="?search=design" class="category-item">
+                            <i class="fas fa-palette me-2"></i> Design
+                            <span class="category-count">8</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h5 class="sidebar-title">Job Type</h5>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="full-time" name="job_type" value="full-time" {% if job_type == 'full-time' %}checked{% endif %}>
+                        <label class="form-check-label" for="full-time">Full Time</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="part-time" name="job_type" value="part-time" {% if job_type == 'part-time' %}checked{% endif %}>
+                        <label class="form-check-label" for="part-time">Part Time</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="internship" name="job_type" value="internship" {% if job_type == 'internship' %}checked{% endif %}>
+                        <label class="form-check-label" for="internship">Internship</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="remote" name="job_type" value="remote" {% if job_type == 'remote' %}checked{% endif %}>
+                        <label class="form-check-label" for="remote">Remote</label>
+                    </div>
+                </div>
+                
+                <div class="sidebar-widget">
+                    <h5 class="sidebar-title">Popular Locations</h5>
+                    <div class="location-list">
+                        <a href="?location=Kigali" class="location-item">
+                            <i class="fas fa-map-marker-alt me-2"></i> Kigali, Rwanda
+                        </a>
+                        <a href="?location=Nairobi" class="location-item">
+                            <i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya
+                        </a>
+                        <a href="?location=Accra" class="location-item">
+                            <i class="fas fa-map-marker-alt me-2"></i> Accra, Ghana
+                        </a>
+                        <a href="?location=Johannesburg" class="location-item">
+                            <i class="fas fa-map-marker-alt me-2"></i> Johannesburg, SA
+                        </a>
+                        <a href="?location=Cairo" class="location-item">
+                            <i class="fas fa-map-marker-alt me-2"></i> Cairo, Egypt
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9 order-lg-2 order-1">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="mb-0">{{ jobs|length }} Jobs Found</h5>
+                    <p class="text-muted mb-0">Showing all available opportunities</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="me-2">Sort by:</span>
+                    <select class="form-select form-select-sm" style="width: auto;">
+                        <option selected>Newest</option>
+                        <option>Relevance</option>
+                        <option>Company</option>
+                    </select>
+                </div>
+            </div>
+            
             {% for job in jobs %}
-            <div class="col-md-6 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ job[1] }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ job[2] }}</h6>
-                        <p class="card-text">{{ job[3][:100] }}...</p>
-                        <p class="text-muted"><small>Location: {{ job[4] }}</small></p>
-                        <form method="POST" action="{{ url_for('apply_job', job_id=job[0]) }}" style="display: inline;">
-                    <button type="submit" class="btn btn-primary btn-sm">Apply Now</button>
-                </form>
+            <div class="job-card">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="job-title">{{ job[1] }}</div>
+                        <div class="job-company">{{ job[2] }}</div>
+                        
+                        <div class="job-meta">
+                            <div class="job-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ job[4] }}</span>
+                            </div>
+                            {% if job[5] %}
+                            <div class="job-meta-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>{{ job[5] }}</span>
+                            </div>
+                            {% endif %}
+                            {% if job[6] %}
+                            <div class="job-meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ job[6].title() }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="job-meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Posted {{ job[8]|datetime if job[8] else 'Recently' }}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="job-description mb-3">{{ job[3][:150] }}{% if job[3]|length > 150 %}...{% endif %}</p>
+                        
+                        <div class="job-tags">
+                            {% if job[6] %}
+                            <span class="job-tag">{{ job[6].title() }}</span>
+                            {% endif %}
+                            <span class="job-tag">{{ job[4].split(',')[0] }}</span>
+                            <!-- Add job type as tag -->
+                            <span class="job-tag">{{ job[6]|title if job[6] else 'Job' }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ms-md-4 mt-3 mt-md-0 d-flex flex-column gap-2 job-actions">
+                        <a href="{{ url_for('view_job', job_id=job[0]) }}" class="btn btn-primary">
+                            <i class="fas fa-eye me-2"></i>View Details
+                        </a>
+                        {% if session.user_type == 'student' %}
+                            {% if job[7] == 1 %}
+                                <!-- Imported job - redirect to original -->
+                                <a href="{{ job[9] if job[9] else url_for('view_job', job_id=job[0]) }}" 
+                                   target="{{ '_blank' if job[9] else '_self' }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-external-link-alt me-2"></i>Apply on Site
+                                </a>
+                            {% else %}
+                                <!-- Recruiter job - apply via StartSmart -->
+                                <a href="{{ url_for('apply_job', job_id=job[0]) }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Apply Now
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-outline-secondary" disabled>
+                                <i class="fas fa-lock me-2"></i>Login as Student
+                            </button>
+                        {% endif %}
+                        
+                        {% if job[9] %}
+                        <a href="{{ job[9] }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-external-link-alt me-2"></i>Original Post
+                        </a>
+                        {% endif %}
+                        
+                        <button class="btn btn-outline-secondary btn-sm save-job" data-job-id="{{ job[0] }}">
+                            <i class="far fa-bookmark me-2"></i>Save Job
+                        </button>
+                        
+                        {% if session.user_type == 'recruiter' and session.user_id == job[7] %}
+                            <div class="dropdown mt-2">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="jobActions{{ job[0] }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="jobActions{{ job[0] }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('edit_job', job_id=job[0]) }}">
+                                            <i class="fas fa-edit me-2"></i>Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form method="POST" action="{{ url_for('delete_job', job_id=job[0]) }}" 
+                                              onsubmit="return confirm('Are you sure you want to delete this job?')">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fas fa-trash me-2"></i>Delete
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
             {% else %}
-            <div class="col-12">
-                <div class="alert alert-info">No jobs posted yet. Check back soon!</div>
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h4 class="empty-state-title">No jobs found</h4>
+                <p class="empty-state-text">Try adjusting your search criteria or check back later for new opportunities.</p>
+                {% if session.user_type == 'recruiter' %}
+                    <a href="{{ url_for('post_job_page') }}" class="btn btn-gradient mt-3">
+                        <i class="fas fa-plus me-2"></i>Post the First Job
+                    </a>
+                {% endif %}
             </div>
             {% endfor %}
+            
+            <!-- Pagination -->
+            {% if jobs|length > 0 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>
 
-<!-- Post Job Modal -->
-<div class="modal fade" id="postJobModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Post New Job</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="/post-job" method="POST">
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <strong>📝 Posting Guidelines:</strong>
-                        <ul class="mb-0 mt-2">
-                            <li>Use clear, descriptive job titles</li>
-                            <li>Include detailed job requirements</li>
-                            <li>Specify location (city, country, or "Remote")</li>
-                            <li>Be transparent about salary ranges</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Job Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="title" required 
-                               placeholder="e.g., Software Developer, Marketing Manager">
-                        <small class="form-text text-muted">Minimum 3 characters</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Company <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="company" required 
-                               placeholder="Your company name">
-                        <small class="form-text text-muted">Minimum 2 characters</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Job Description <span class="text-danger">*</span></label>
-                        <textarea class="form-control" name="description" rows="4" required 
-                                  placeholder="Describe the role, responsibilities, requirements, and qualifications..."></textarea>
-                        <small class="form-text text-muted">Minimum 10 characters. Be detailed and specific.</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Location <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="location" required 
-                               placeholder="e.g., Lagos, Nigeria or Remote">
-                        <small class="form-text text-muted">City, Country or specify if remote work is allowed</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Salary Range</label>
-                        <input type="text" class="form-control" name="salary" 
-                               placeholder="e.g., $50,000 - $70,000 or ₦2,000,000 - ₦3,000,000">
-                        <small class="form-text text-muted">Optional but recommended for better applications</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Work Arrangement <span class="text-danger">*</span></label>
-                        <select class="form-select" name="job_type" required>
-                            <option value="">Select work arrangement...</option>
-                            <option value="full-time">Full-time (Office)</option>
-                            <option value="part-time">Part-time (Office)</option>
-                            <option value="internship">Internship</option>
-                            <option value="contract">Contract/Freelance</option>
-                            <option value="remote">Remote Work</option>
-                            <option value="hybrid">Hybrid (Office + Remote)</option>
-                        </select>
-                        <small class="form-text text-muted">Choose how the work will be performed</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Post Job</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 {% endblock %}

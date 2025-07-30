@@ -1,34 +1,513 @@
 {% extends "base.html" %}
 
-{% block title %}Login - StartSmart{% endblock %}
+{% block title %}Welcome Back - StartSmart{% endblock %}
 
 {% block content %}
-<div class="login-bg d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Welcome Back</h3>
+<div class="auth-wrapper">
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Left Side - Login Form -->
+            <div class="col-lg-6 auth-left-panel-login">
+                <div class="auth-form-container">
+                    <div class="auth-header text-center mb-5">
+                        <h1 class="auth-title">Welcome Back</h1>
+                        <p class="auth-subtitle">Sign in to continue your journey</p>
                     </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                    
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="alerts-container mb-4">
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ 'success' if 'Welcome back' in message or 'Registration successful' in message else 'danger' }} alert-dismissible fade show custom-alert" role="alert">
+                                        <i class="fas fa-{{ 'check-circle' if 'Welcome back' in message or 'Registration successful' in message else 'exclamation-triangle' }} me-2"></i>
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('login') }}" class="auth-form" id="loginForm">
+                        <div class="mb-4">
+                            <div class="form-floating-modern">
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       placeholder=" " 
+                                       required
+                                       autocomplete="email"
+                                       value="{{ request.form.email if request.form else '' }}">
+                                <label for="email">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid email address
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-floating-modern">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder=" " 
+                                       required
+                                       autocomplete="current-password">
+                                <label for="password">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <button type="button" class="password-toggle" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                </button>
+                                <div class="invalid-feedback">
+                                    Please enter your password
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check custom-checkbox">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="rememberMe" 
+                                           name="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <a href="#" class="text-primary forgot-password-link" onclick="alert('Password reset functionality would be implemented here')">Forgot password?</a>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-4 submit-btn">
+                            <span class="btn-text">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </span>
+                            <span class="btn-loading d-none">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Signing In...
+                            </span>
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? 
+                                <a href="{{ url_for('register') }}" class="text-primary fw-bold">Create Account</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Right Side - Hero Section -->
+            <div class="col-lg-6 d-none d-lg-flex auth-right-panel-login">
+                <div class="hero-content">
+                    <div class="hero-stats mb-5">
+                        <div class="stat-item">
+                            <div class="stat-number">10K+</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Companies</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1K+</div>
+                            <div class="stat-label">Job Opportunities</div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                    
+                    <div class="testimonial">
+                        <div class="testimonial-content">
+                            <blockquote>
+                                "StartSmart helped me find my dream job at a leading tech company. The mentorship program was invaluable!"
+                            </blockquote>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="author-info">
+                                    <div class="author-name">Sarah Johnson</div>
+                                    <div class="author-title">Software Engineer at TechCorp</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
-                </form>
-                <div class="text-center mt-3">
-                    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                    
+                    <div class="hero-illustration">
+                        <div class="floating-card">
+                            <i class="fas fa-briefcase"></i>
+                            <span>New Job Alert</span>
+                        </div>
+                        <div class="floating-card" style="animation-delay: 0.5s;">
+                            <i class="fas fa-users"></i>
+                            <span>Mentorship Match</span>
+                        </div>
+                        <div class="floating-card" style="animation-delay: 1s;">
+                            <i class="fas fa-rocket"></i>
+                            <span>Startup Opportunity</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+.auth-wrapper {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.auth-left-panel-login {
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+}
+
+.auth-right-panel-login {
+    background: var(--primary-gradient);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-form-container {
+    max-width: 450px;
+    width: 100%;
+}
+
+.auth-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.form-floating-modern {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.form-floating-modern .form-control {
+    height: 60px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    padding-right: 50px;
+    color: #212529;
+}
+
+.form-floating-modern .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    background-color: white;
+    color: #212529;
+}
+
+.form-floating-modern label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background: transparent;
+    padding: 0 0.5rem;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+.form-floating-modern .form-control:focus ~ label,
+.form-floating-modern .form-control:not(:placeholder-shown) ~ label {
+    top: 0;
+    font-size: 0.85rem;
+    color: #667eea;
+    background: white;
+    font-weight: 600;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    z-index: 5;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: #667eea;
+}
+
+.custom-checkbox .form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.forgot-password-link {
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+.submit-btn {
+    height: 60px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: var(--primary-gradient);
+    border: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.hero-content {
+    color: white;
+    text-align: center;
+    max-width: 500px;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.testimonial {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 3rem 0;
+}
+
+.testimonial blockquote {
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.author-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.author-title {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.hero-illustration {
+    position: relative;
+    margin-top: 3rem;
+}
+
+.floating-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-card i {
+    font-size: 1.2rem;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.custom-alert {
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+}
+
+.form-control.is-invalid {
+    border-color: var(--danger-color);
+}
+
+.form-control.is-valid {
+    border-color: var(--success-color);
+}
+
+@media (max-width: 991.98px) {
+    .auth-left-panel-login {
+        background: var(--primary-gradient);
+        color: white;
+    }
+    
+    .auth-title,
+    .auth-subtitle {
+        color: white;
+    }
+    
+    .form-floating-modern .form-control {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-color: rgba(255, 255, 255, 0.8);
+        color: #212529;
+    }
+    
+    .form-floating-modern .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .form-floating-modern label {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-floating-modern .form-control:focus ~ label,
+    .form-floating-modern .form-control:not(:placeholder-shown) ~ label {
+        background: rgba(255, 255, 255, 0.95);
+        color: #667eea;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    const submitBtn = form.querySelector('.submit-btn');
+    
+    // Simple form submission - no interference
+    form.addEventListener('submit', function(e) {
+        if (form.checkValidity()) {
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            if (btnText && btnLoading) {
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+                submitBtn.disabled = true;
+            }
+        }
+    });
+    
+    // Real-time validation
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+});
+
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('passwordToggleIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+</script>
+
+<!-- Enhanced Form Validation -->
+<script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Applications - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Job Applications</h2>
+    
+    {% if applications %}
+        <!-- Desktop Table View -->
+        <div class="table-responsive d-none d-md-block">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Applicant</th>
+                        <th>Email</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app[1] }}</td>
+                        <td>{{ app[3] }}</td>
+                        <td>{{ app[4] }}</td>
+                        <td>{{ app[6][:10] }}</td>
+                        <td>
+                            <span class="badge bg-{% if app[5] == 'pending' %}warning{% elif app[5] == 'reviewed' %}info{% elif app[5] == 'shortlisted' %}success{% elif app[5] == 'hired' %}primary{% else %}danger{% endif %}">
+                                {{ app[5].title() }}
+                            </span>
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ url_for('update_application_status') }}" class="d-inline">
+                                <input type="hidden" name="application_id" value="{{ app[0] }}">
+                                <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+                                    <option value="pending" {% if app[5] == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="reviewed" {% if app[5] == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                                    <option value="shortlisted" {% if app[5] == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                    <option value="rejected" {% if app[5] == 'rejected' %}selected{% endif %}>Rejected</option>
+                                    <option value="hired" {% if app[5] == 'hired' %}selected{% endif %}>Hired</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Card View -->
+        <div class="d-md-none">
+            {% for app in applications %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">{{ app[1] }}</h6>
+                    <p class="card-text">
+                        <strong>Applicant:</strong> {{ app[3] }}<br>
+                        <strong>Email:</strong> {{ app[4] }}<br>
+                        <strong>Applied:</strong> {{ app[6][:10] }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-{% if app[5] == 'pending' %}warning{% elif app[5] == 'reviewed' %}info{% elif app[5] == 'shortlisted' %}success{% elif app[5] == 'hired' %}primary{% else %}danger{% endif %}">
+                            {{ app[5].title() }}
+                        </span>
+                        <form method="POST" action="{{ url_for('update_application_status') }}" class="d-inline">
+                            <input type="hidden" name="application_id" value="{{ app[0] }}">
+                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" style="width: auto;">
+                                <option value="pending" {% if app[5] == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="reviewed" {% if app[5] == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                                <option value="shortlisted" {% if app[5] == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                <option value="rejected" {% if app[5] == 'rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="hired" {% if app[5] == 'hired' %}selected{% endif %}>Hired</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4>No Applications Yet</h4>
+            <p>No one has applied for your job postings yet. Make sure your job listings are attractive and well-detailed!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

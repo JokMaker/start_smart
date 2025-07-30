@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('edit_profile') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" value="{{ user[3] or '' }}" required>
+                            <small class="form-text text-muted">Your full name as you want it to appear</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" name="bio" rows="4" placeholder="Tell us about yourself...">{{ user[5] if user[5] and user[5] != 'None' else '' }}</textarea>
+                            <small class="form-text text-muted">
+                                {% if session.user_type == 'student' %}
+                                    Describe your background, interests, and career goals
+                                {% elif session.user_type == 'recruiter' %}
+                                    Describe your company and what you're looking for in candidates
+                                {% elif session.user_type == 'mentor' %}
+                                    Describe your expertise and how you can help students
+                                {% endif %}
+                            </small>
+                        </div>
+                        
+                        {% if session.user_type == 'student' %}
+                        <div class="mb-3">
+                            <label class="form-label">Skills</label>
+                            <input type="text" class="form-control" name="skills" value="{{ user[6] if user[6] and user[6] != 'None' else '' }}" 
+                                   placeholder="e.g., Python, JavaScript, Marketing, Design">
+                            <small class="form-text text-muted">Separate skills with commas</small>
+                        </div>
+                        {% elif session.user_type == 'mentor' %}
+                        <div class="mb-3">
+                            <label class="form-label">Expertise Areas</label>
+                            <input type="text" class="form-control" name="skills" value="{{ user[6] if user[6] and user[6] != 'None' else '' }}" 
+                                   placeholder="e.g., Software Development, Business Strategy, Marketing">
+                            <small class="form-text text-muted">Areas where you can provide mentorship</small>
+                        </div>
+                        {% elif session.user_type == 'recruiter' %}
+                        <div class="mb-3">
+                            <label class="form-label">Industry/Focus</label>
+                            <input type="text" class="form-control" name="skills" value="{{ user[6] if user[6] and user[6] != 'None' else '' }}" 
+                                   placeholder="e.g., Technology, Healthcare, Finance">
+                            <small class="form-text text-muted">Your company's industry or hiring focus</small>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ user[7] if user[7] and user[7] != 'None' else '' }}" 
+                                   placeholder="e.g., Lagos, Nigeria or Remote">
+                            <small class="form-text text-muted">Your current location or preferred work location</small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            {% if session.user_type == 'student' %}
+            <!-- Resume Upload Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Resume Upload</h5>
+                </div>
+                <div class="card-body">
+                    {% if user[8] %}
+                        <div class="alert alert-success">
+                            <strong>✅ Resume uploaded:</strong> {{ user[8] }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <strong>📄 No resume uploaded yet</strong>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('upload_profile_image') }}" enctype="multipart/form-data">
+                        <div class="alert alert-warning">
+                            <strong>Resume upload feature coming soon!</strong>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Profile Image Upload Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Profile Image</h5>
+                </div>
+                <div class="card-body">
+                    {% if user[9] %}
+                        <div class="text-center mb-3">
+                            <img src="{{ url_for('static', filename='uploads/' + user[9]) }}" 
+                                 alt="Current Profile Image" class="rounded-circle" 
+                                 style="width: 100px; height: 100px; object-fit: cover;">
+                            <p class="mt-2 text-success">Current profile image</p>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <strong>🖼️ No profile image uploaded yet</strong>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('upload_profile_image') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Upload Profile Image</label>
+                            <input type="file" class="form-control" name="profile_image" accept=".png,.jpg,.jpeg,.gif" required>
+                            <small class="form-text text-muted">Accepted formats: PNG, JPG, JPEG, GIF (Max 16MB)</small>
+                        </div>
+                        <button type="submit" class="btn btn-success">Upload Image</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

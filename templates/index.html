@@ -1,74 +1,277 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section text-center py-5">
-    <div class="container">
-        <h1 class="display-4">StartSmart</h1>
-        <p class="lead typing-text" id="typingText">Empowering Youth Through Job Creation & Entrepreneurship</p>
-        <div class="search-hero mt-4">
-            <div class="input-group">
-                <input type="text" class="form-control search-input" placeholder="Search jobs, startups, or skills...">
-                <button class="btn btn-primary search-btn" type="button">🔍 Search</button>
+<div class="hero-section text-center">
+    <div class="hero-content">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-lg-start">
+                    <h1 class="hero-heading mb-3">Launch Your Career in Africa</h1>
+                    <p class="hero-subheading mb-4" id="typingText">Empowering African Youth Through Job Creation & Entrepreneurship</p>
+                    
+                    <div class="search-container mb-4 text-start">
+                        <input type="text" class="search-input-modern" placeholder="Search jobs, startups, or skills..." id="heroSearch">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    
+                    <div class="d-flex flex-column flex-md-row gap-3">
+                        <a href="{{ url_for('jobs') }}" class="btn btn-gradient btn-lg">
+                            <i class="fas fa-briefcase me-2"></i>Find Jobs
+                        </a>
+                        <a href="{{ url_for('startups') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Explore Startups
+                        </a>
+                        <a href="{{ url_for('mentorship') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-handshake me-2"></i>Get Mentorship
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="hero-image-container">
+                        <img src="{{ url_for('static', filename='images/hero-illustration.svg') }}" alt="StartSmart Hero Illustration" class="img-fluid hero-image">
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="mt-4">
-            <a href="{{ url_for('jobs') }}" class="btn btn-primary btn-lg me-3 pulse-on-hover">Find Jobs</a>
-            <a href="{{ url_for('startups') }}" class="btn btn-outline-light btn-lg pulse-on-hover">Explore Startups</a>
         </div>
     </div>
 </div>
 
 <!-- Statistics Section -->
-<div class="stats-section text-center">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3">
-                <span class="stat-number" data-target="500">0</span>
-                <p>Active Students</p>
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Our Impact</h2>
+        <p class="text-muted">Connecting talent with opportunities across Africa</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" data-target="500">0</div>
+                <div class="stat-label">Active Students</div>
+                <div class="stat-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
             </div>
-            <div class="col-md-3">
-                <span class="stat-number" data-target="150">0</span>
-                <p>Job Opportunities</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" data-target="150">0</div>
+                <div class="stat-label">Job Opportunities</div>
+                <div class="stat-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
             </div>
-            <div class="col-md-3">
-                <span class="stat-number" data-target="75">0</span>
-                <p>Startups Created</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" data-target="75">0</div>
+                <div class="stat-label">Startups Created</div>
+                <div class="stat-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
             </div>
-            <div class="col-md-3">
-                <span class="stat-number" data-target="200">0</span>
-                <p>Mentorship Sessions</p>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" data-target="200">0</div>
+                <div class="stat-label">Mentorship Sessions</div>
+                <div class="stat-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-5">
-    <div class="col-md-4">
-        <div class="card card-enhanced h-100">
-            <div class="card-body text-center">
-                <div class="mb-3" style="font-size: 3rem;">💼</div>
-                <h5 class="card-title">Job Opportunities</h5>
-                <p class="card-text">Find internships and jobs tailored for African youth</p>
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-3">Why Choose StartSmart?</h2>
+        <p class="text-muted">Everything you need to kickstart your career in Africa</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card card-accent-primary h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="feature-icon-container mb-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Job Opportunities</h5>
+                    <p class="card-text text-muted">Find internships and jobs tailored for African youth across various industries</p>
+                    <a href="{{ url_for('jobs') }}" class="btn btn-primary mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Browse Jobs
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-enhanced h-100">
-            <div class="card-body text-center">
-                <div class="mb-3" style="font-size: 3rem;">🚀</div>
-                <h5 class="card-title">Startup Hub</h5>
-                <p class="card-text">Launch and showcase your entrepreneurial ventures</p>
+        <div class="col-md-4">
+            <div class="card card-accent-secondary h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="feature-icon-container mb-4">
+                        <div class="feature-icon feature-icon-secondary">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Startup Hub</h5>
+                    <p class="card-text text-muted">Launch and showcase your entrepreneurial ventures with our supportive community</p>
+                    <a href="{{ url_for('startups') }}" class="btn btn-secondary mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Explore Startups
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-enhanced h-100">
-            <div class="card-body text-center">
-                <div class="mb-3" style="font-size: 3rem;">🤝</div>
-                <h5 class="card-title">Mentorship</h5>
-                <p class="card-text">Connect with experienced professionals</p>
+        <div class="col-md-4">
+            <div class="card card-accent-warning h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="feature-icon-container mb-4">
+                        <div class="feature-icon feature-icon-warning">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Mentorship</h5>
+                    <p class="card-text text-muted">Connect with experienced professionals who guide your career journey</p>
+                    <a href="{{ url_for('mentorship') }}" class="btn btn-warning text-white mt-3">
+                        <i class="fas fa-arrow-right me-2"></i>Find Mentors
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- How It Works Section -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-3">How StartSmart Works</h2>
+        <p class="text-muted">Your path to career success in just a few simple steps</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="how-it-works">
+                <div class="step-container">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Create Your Profile</h4>
+                        <p>Sign up and build your professional profile highlighting your skills, experience, and career goals.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Explore Opportunities</h4>
+                        <p>Browse through job listings, startup ventures, and mentorship programs tailored to your interests.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Apply & Connect</h4>
+                        <p>Apply for positions, join startup teams, or connect with mentors with just a few clicks.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Grow Your Career</h4>
+                        <p>Leverage resources, feedback, and networking to accelerate your professional growth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="container my-5">
+    <div class="cta-card">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-3">Ready to Start Your Journey?</h3>
+                <p class="mb-lg-0">Join thousands of African youth building their future with StartSmart</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Join StartSmart
+                    </a>
+                    <a href="{{ url_for('resources') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-book me-2"></i>Resources
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Typing animation
+document.addEventListener('DOMContentLoaded', function() {
+    const texts = [
+        'Empowering African Youth Through Job Creation & Entrepreneurship',
+        'Connecting Talent with Opportunities Across Africa',
+        'Building the Future of Work in Africa'
+    ];
+    let textIndex = 0;
+    let charIndex = 0;
+    const typingElement = document.getElementById('typingText');
+    
+    function typeText() {
+        if (charIndex < texts[textIndex].length) {
+            typingElement.textContent += texts[textIndex].charAt(charIndex);
+            charIndex++;
+            setTimeout(typeText, 50);
+        } else {
+            setTimeout(eraseText, 2000);
+        }
+    }
+    
+    function eraseText() {
+        if (charIndex > 0) {
+            typingElement.textContent = texts[textIndex].substring(0, charIndex - 1);
+            charIndex--;
+            setTimeout(eraseText, 30);
+        } else {
+            textIndex = (textIndex + 1) % texts.length;
+            setTimeout(typeText, 500);
+        }
+    }
+    
+    // Start typing animation
+    typingElement.textContent = '';
+    typeText();
+    
+    // Animate counters when in view
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.getAttribute('data-target'));
+                animateCounter(entry.target, target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.stat-number').forEach(counter => {
+        observer.observe(counter);
+    });
+    
+    // Hero search functionality
+    document.getElementById('heroSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const query = this.value;
+            if (query.trim()) {
+                window.location.href = `/jobs?search=${encodeURIComponent(query)}`;
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

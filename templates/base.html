@@ -3,51 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StartSmart - Empowering African Youth Through Job Creation & Entrepreneurship">
     <title>{% block title %}StartSmart{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/animations.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/job-posting.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/job-listing.js') }}" defer></script>
+    <!-- Presentation Enhancement Scripts -->
+    <script src="{{ url_for('static', filename='js/smart-loading.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/demo-mode.js') }}" defer></script>
 </head>
 <body data-theme="light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background: var(--navbar-bg);">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('home') }}">🚀 StartSmart</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+                <i class="fas fa-rocket me-2"></i>
+                <span class="fw-bold">StartSmart</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="{{ url_for('jobs') }}">Jobs</a>
-                    <a class="nav-link" href="{{ url_for('startups') }}">Startups</a>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{{ url_for('jobs') }}">
+                            <i class="fas fa-briefcase me-1"></i> Jobs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{{ url_for('startups') }}">
+                            <i class="fas fa-rocket me-1"></i> Startups
+                        </a>
+                    </li>
                     {% if session.user_id %}
-                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
-                        <a class="nav-link" href="{{ url_for('mentorship') }}">Mentorship</a>
-                        <a class="nav-link" href="{{ url_for('resources') }}">Resources</a>
-                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
-                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                            </a>
+                        </li>
+                        {% if session.user_type == 'student' %}
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{{ url_for('my_applications') }}">
+                                    <i class="fas fa-file-alt me-1"></i> My Applications
+                                </a>
+                            </li>
+                        {% elif session.user_type == 'recruiter' %}
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{{ url_for('post_job') }}">
+                                    <i class="fas fa-plus me-1"></i> Post Job
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{{ url_for('manage_applications') }}">
+                                    <i class="fas fa-users me-1"></i> Applications
+                                </a>
+                            </li>
+                        {% elif session.user_type == 'mentor' %}
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{{ url_for('upload_resource') }}">
+                                    <i class="fas fa-upload me-1"></i> Upload Resource
+                                </a>
+                            </li>
+                        {% elif session.user_type == 'admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link px-3" href="{{ url_for('admin') }}">
+                                    <i class="fas fa-cogs me-1"></i> Admin Panel
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url_for('live_analytics') }}">
+                                <i class="fas fa-chart-line me-1"></i> Live Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url_for('mentorship') }}">
+                                <i class="fas fa-handshake me-1"></i> Mentorship
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url_for('resources') }}">
+                                <i class="fas fa-book me-1"></i> Resources
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> Account
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="fas fa-user me-2"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('notifications') }}"><i class="fas fa-bell me-2"></i> Notifications</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url_for('login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-light text-primary px-3 ms-2" href="{{ url_for('register') }}">
+                                <i class="fas fa-user-plus me-1"></i> Register
+                            </a>
+                        </li>
                     {% endif %}
-                    <button class="theme-toggle ms-2" onclick="toggleTheme()">🌙</button>
-                </div>
+                    <li class="nav-item ms-2">
+                        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <main class="container mt-4">
+    <!-- Main Content -->
+    <main class="container py-4">
         <!-- Toast Container -->
         <div class="toast-container"></div>
         
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != '_' else 'info' }} alert-dismissible fade show mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{{ 'info-circle' if category == '_' or category == 'info' else 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'warning' else 'exclamation-circle' }} me-2"></i>
+                            <div>{{ message }}</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -56,45 +153,75 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Floating Action Button -->
-    <button class="fab" onclick="scrollToTop()" title="Back to Top">
-        ↑
-    </button>
+
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>StartSmart</h5>
-                    <p>Empowering African youth through job creation and entrepreneurship.</p>
-                </div>
-                <div class="col-md-4">
-                    <h6>Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('jobs') }}">Jobs</a></li>
-                        <li><a href="{{ url_for('startups') }}">Startups</a></li>
-                        <li><a href="{{ url_for('mentorship') }}">Mentorship</a></li>
-                        <li><a href="{{ url_for('resources') }}">Resources</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h6>Connect With Us</h6>
-                    <div class="d-flex gap-3">
-                        <a href="#">📧 Email</a>
-                        <a href="#">📱 LinkedIn</a>
-                        <a href="#">🐦 Twitter</a>
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-rocket me-2" style="font-size: 1.5rem;"></i>
+                        <h5 class="mb-0">StartSmart</h5>
+                    </div>
+                    <p class="mb-4">Empowering African youth through job creation and entrepreneurship. Building the future of work across the continent.</p>
+                    <div class="social-links d-flex gap-3 mb-4">
+                        <a href="mailto:j.kur@alustudent.com" class="social-link" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        <a href="https://www.linkedin.com/in/jok-maker-kur-5125a3246/" target="_blank" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="{{ url_for('jobs') }}"><i class="fas fa-chevron-right me-2"></i>Jobs</a></li>
+                        <li><a href="{{ url_for('startups') }}"><i class="fas fa-chevron-right me-2"></i>Startups</a></li>
+                        <li><a href="{{ url_for('mentorship') }}"><i class="fas fa-chevron-right me-2"></i>Mentorship</a></li>
+                        <li><a href="{{ url_for('resources') }}"><i class="fas fa-chevron-right me-2"></i>Resources</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6>For Users</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="{{ url_for('register') }}"><i class="fas fa-chevron-right me-2"></i>Register</a></li>
+                        <li><a href="{{ url_for('login') }}"><i class="fas fa-chevron-right me-2"></i>Login</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>FAQ</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i>Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6>Contact Us</h6>
+                    <ul class="list-unstyled footer-contact">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Kigali, Rwanda</li>
+                        <li><i class="fas fa-phone me-2"></i> +250 793 224 036</li>
+                        <li><i class="fas fa-envelope me-2"></i> j.kur@alustudent.com</li>
+                    </ul>
+                </div>
             </div>
-            <hr class="my-3">
-            <div class="text-center">
-                <small>&copy; 2025 StartSmart. Made with ❤️ for African Youth.</small>
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="mb-md-0">&copy; 2025 StartSmart. Made with <i class="fas fa-heart text-danger"></i> for African Youth.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                            <li class="list-inline-item"><a href="#">Terms of Use</a></li>
+                            <li class="list-inline-item"><a href="#">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="scrollToTop()" title="Back to Top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
     <script>
         function toggleTheme() {
             const body = document.body;
@@ -103,11 +230,11 @@
             
             if (currentTheme === 'light') {
                 body.setAttribute('data-theme', 'dark');
-                button.textContent = '☀️';
+                button.innerHTML = '<i class="fas fa-sun"></i>';
                 localStorage.setItem('theme', 'dark');
             } else {
                 body.setAttribute('data-theme', 'light');
-                button.textContent = '🌙';
+                button.innerHTML = '<i class="fas fa-moon"></i>';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -117,14 +244,20 @@
             const savedTheme = localStorage.getItem('theme') || 'light';
             const button = document.querySelector('.theme-toggle');
             document.body.setAttribute('data-theme', savedTheme);
-            button.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            button.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             
-            // Add fade-in animation to cards
+            // Add staggered animations to cards
             const cards = document.querySelectorAll('.card');
             cards.forEach((card, index) => {
                 setTimeout(() => {
                     card.classList.add('fade-in-up');
                 }, index * 100);
+            });
+            
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
         
@@ -137,7 +270,7 @@
         window.addEventListener('scroll', function() {
             const fab = document.querySelector('.fab');
             if (window.scrollY > 300) {
-                fab.style.display = 'block';
+                fab.style.display = 'flex';
             } else {
                 fab.style.display = 'none';
             }
@@ -156,6 +289,17 @@
                 }
             }, 20);
         }
+        
+        // Add active class to current nav item
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentLocation = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentLocation) {
+                    link.classList.add('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>

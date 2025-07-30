@@ -1,0 +1,419 @@
+<!-- Success Stories Section for index.html -->
+<div class="success-stories-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">🌟 Success Stories</h2>
+            <p class="text-muted">Real people, real achievements through StartSmart</p>
+        </div>
+        
+        <div class="stories-carousel-container">
+            <div class="stories-carousel" id="storiesCarousel">
+                <!-- Story 1 -->
+                <div class="story-card active">
+                    <div class="story-background">
+                        <div class="story-overlay"></div>
+                        <img src="{{ url_for('static', filename='images/success-story-1.jpg') }}" alt="Amina's Story" class="story-bg-image">
+                    </div>
+                    <div class="story-content">
+                        <div class="story-profile">
+                            <img src="{{ url_for('static', filename='images/profile-amina.jpg') }}" alt="Amina Hassan" class="story-avatar">
+                            <div class="story-info">
+                                <h4 class="story-name">Amina Hassan</h4>
+                                <p class="story-title">Software Engineer at TechnovaAfrica</p>
+                                <div class="story-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Lagos, Nigeria</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="story-text">
+                            <blockquote>
+                                "StartSmart connected me with my dream job! The mentorship program helped me build confidence, and within 3 months I landed a role at one of Africa's leading tech companies."
+                            </blockquote>
+                        </div>
+                        <div class="story-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">3</span>
+                                <span class="stat-label">Months to Success</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">₦850K</span>
+                                <span class="stat-label">Starting Salary</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">12</span>
+                                <span class="stat-label">Mentorship Hours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story 2 -->
+                <div class="story-card">
+                    <div class="story-background">
+                        <div class="story-overlay"></div>
+                        <img src="{{ url_for('static', filename='images/success-story-2.jpg') }}" alt="Kwame's Story" class="story-bg-image">
+                    </div>
+                    <div class="story-content">
+                        <div class="story-profile">
+                            <img src="{{ url_for('static', filename='images/profile-kwame.jpg') }}" alt="Kwame Asante" class="story-avatar">
+                            <div class="story-info">
+                                <h4 class="story-name">Kwame Asante</h4>
+                                <p class="story-title">Founder of GreenTech Solutions</p>
+                                <div class="story-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Accra, Ghana</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="story-text">
+                            <blockquote>
+                                "Through StartSmart's startup incubator, I found co-founders and secured initial funding. Our renewable energy startup now employs 15 people across West Africa!"
+                            </blockquote>
+                        </div>
+                        <div class="story-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">$50K</span>
+                                <span class="stat-label">Funding Raised</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">15</span>
+                                <span class="stat-label">Jobs Created</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">6</span>
+                                <span class="stat-label">Months to Launch</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story 3 -->
+                <div class="story-card">
+                    <div class="story-background">
+                        <div class="story-overlay"></div>
+                        <img src="{{ url_for('static', filename='images/success-story-3.jpg') }}" alt="Fatima's Story" class="story-bg-image">
+                    </div>
+                    <div class="story-content">
+                        <div class="story-profile">
+                            <img src="{{ url_for('static', filename='images/profile-fatima.jpg') }}" alt="Fatima Mohamed" class="story-avatar">
+                            <div class="story-info">
+                                <h4 class="story-name">Fatima Mohamed</h4>
+                                <p class="story-title">Digital Marketing Manager</p>
+                                <div class="story-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Nairobi, Kenya</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="story-text">
+                            <blockquote>
+                                "I transitioned from hospitality to tech marketing thanks to StartSmart's skills development program. The community support was incredible throughout my journey."
+                            </blockquote>
+                        </div>
+                        <div class="story-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">100%</span>
+                                <span class="stat-label">Salary Increase</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">4</span>
+                                <span class="stat-label">New Skills Learned</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">8</span>
+                                <span class="stat-label">Weeks Training</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Carousel Controls -->
+            <div class="carousel-controls">
+                <button class="carousel-btn prev" onclick="previousStory()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="carousel-indicators">
+                    <span class="indicator active" onclick="showStory(0)"></span>
+                    <span class="indicator" onclick="showStory(1)"></span>
+                    <span class="indicator" onclick="showStory(2)"></span>
+                </div>
+                <button class="carousel-btn next" onclick="nextStory()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-stories-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.stories-carousel-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.stories-carousel {
+    position: relative;
+    height: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.story-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+}
+
+.story-card.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.story-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.story-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.story-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(232, 90, 13, 0.8) 0%, rgba(30, 77, 140, 0.8) 100%);
+    z-index: 2;
+}
+
+.story-content {
+    position: relative;
+    z-index: 3;
+    color: white;
+    padding: 40px;
+    width: 100%;
+}
+
+.story-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.story-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.3);
+    margin-right: 20px;
+    object-fit: cover;
+}
+
+.story-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: white;
+}
+
+.story-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.9);
+}
+
+.story-location {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.story-location i {
+    margin-right: 6px;
+}
+
+.story-text {
+    margin-bottom: 32px;
+}
+
+.story-text blockquote {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-style: italic;
+    color: white;
+}
+
+.story-stats {
+    display: flex;
+    gap: 40px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.carousel-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 0 20px;
+}
+
+.carousel-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    color: var(--primary);
+    font-size: 1.125rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.carousel-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.carousel-indicators {
+    display: flex;
+    gap: 12px;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: var(--primary);
+    transform: scale(1.2);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .stories-carousel {
+        height: 400px;
+    }
+    
+    .story-content {
+        padding: 24px;
+    }
+    
+    .story-stats {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .story-stats .stat-item {
+        display: flex;
+        justify-content: space-between;
+        text-align: left;
+    }
+    
+    .stat-number {
+        margin-bottom: 0;
+    }
+}
+</style>
+
+<script>
+let currentStory = 0;
+const totalStories = 3;
+
+function showStory(index) {
+    const stories = document.querySelectorAll('.story-card');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    // Remove active class from all
+    stories.forEach(story => story.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    // Add active class to current
+    stories[index].classList.add('active');
+    indicators[index].classList.add('active');
+    
+    currentStory = index;
+}
+
+function nextStory() {
+    currentStory = (currentStory + 1) % totalStories;
+    showStory(currentStory);
+}
+
+function previousStory() {
+    currentStory = (currentStory - 1 + totalStories) % totalStories;
+    showStory(currentStory);
+}
+
+// Auto-advance stories
+setInterval(nextStory, 6000);
+
+// Add swipe support for mobile
+let startX = 0;
+const carousel = document.getElementById('storiesCarousel');
+
+carousel.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+});
+
+carousel.addEventListener('touchend', (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    
+    if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+            nextStory();
+        } else {
+            previousStory();
+        }
+    }
+});
+</script>

@@ -44,7 +44,7 @@ A comprehensive web platform connecting students with job opportunities, startup
 
 ### 1. Clone & Setup
 ```bash
-git clone <repository-url>
+git clone https://github.com/JokMaker/start_smart.git
 cd start_smart
 ```
 
@@ -53,16 +53,29 @@ cd start_smart
 pip install -r requirements.txt
 ```
 
-### 3. Run Application
+### 3. Initialize Database (First Time Only)
+```bash
+python -c "from app import init_db; init_db()"
+```
+
+### 4. Run Application
 ```bash
 python app.py
 ```
 
-### 4. Access Platform
+### 5. Access Platform
 Open your browser and navigate to:
 ```
 http://localhost:5000
 ```
+
+## 🌐 Live Demo
+
+**Public URL:** [Add your deployed URL here]
+
+## 📋 Documentation
+
+**SRS Document:** [https://docs.google.com/document/d/1Vlsymv0g8lc0wPMPNhg_SzNuSNfJymLiKWNp06GSoX0/edit?tab=t.0]
 
 ## 👥 User Types & Capabilities
 
@@ -139,7 +152,7 @@ The application uses default configurations suitable for development. For produc
 
 1. Change the secret key in `app.py`:
 ```python
-app.secret_key = 'your-production-secret-key'
+app.secret_key = 'enter your secret key in the file concern with api'
 ```
 
 2. Configure database settings for production use
@@ -147,6 +160,43 @@ app.secret_key = 'your-production-secret-key'
 ### File Upload Settings
 - Maximum file size: 16MB
 - Upload directory: `static/uploads/`
+
+## 🚀 Deployment
+
+### Deploy to Heroku
+1. Install Heroku CLI
+2. Create `Procfile`:
+```
+web: python app.py
+```
+3. Create `runtime.txt`:
+```
+python-3.11.0
+```
+4. Deploy:
+```bash
+heroku create your-app-name
+git push heroku main
+```
+
+### Deploy to Railway
+1. Connect GitHub repository to Railway
+2. Set environment variables if needed
+3. Deploy automatically
+
+## 🔍 Troubleshooting
+
+### Common Issues
+1. **Database not found**: Run the database initialization command
+2. **Port already in use**: Change port in `app.py` or kill existing process
+3. **Module not found**: Ensure all dependencies are installed with `pip install -r requirements.txt`
+
+### Database Reset
+If you need to reset the database:
+```bash
+del startsmart.db
+python -c "from app import init_db; init_db()"
+```
 
 ## 🚦 Getting Started Guide
 

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Post Job - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus me-2"></i>Post New Job</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>📝 Posting Guidelines:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Use clear, descriptive job titles</li>
+                            <li>Include detailed job requirements</li>
+                            <li>Specify location (city, country, or "Remote")</li>
+                            <li>Be transparent about salary ranges</li>
+                        </ul>
+                    </div>
+
+                    <form action="/post-job" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Job Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="title" required 
+                                   placeholder="e.g., Software Developer, Marketing Manager">
+                            <small class="form-text text-muted">Minimum 3 characters</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Company <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="company" required 
+                                   placeholder="Your company name">
+                            <small class="form-text text-muted">Minimum 2 characters</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Job Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="description" rows="6" required 
+                                      placeholder="Describe the role, responsibilities, requirements, and qualifications..."></textarea>
+                            <small class="form-text text-muted">Minimum 10 characters. Be detailed and specific.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Location <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="location" required 
+                                   placeholder="e.g., Lagos, Nigeria or Remote">
+                            <small class="form-text text-muted">City, Country or specify if remote work is allowed</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Salary Range</label>
+                            <input type="text" class="form-control" name="salary" 
+                                   placeholder="e.g., $50,000 - $70,000 or ₦2,000,000 - ₦3,000,000">
+                            <small class="form-text text-muted">Optional but recommended for better applications</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Work Arrangement <span class="text-danger">*</span></label>
+                            <select class="form-select" name="job_type" required>
+                                <option value="">Select work arrangement...</option>
+                                <option value="full-time">Full-time</option>
+                                <option value="part-time">Part-time</option>
+                                <option value="internship">Internship</option>
+                                <option value="contract">Contract</option>
+                                <option value="remote">Remote</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                            <small class="form-text text-muted">Choose how the work will be performed</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Requirements <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="requirements" rows="4" required 
+                                      placeholder="List the key requirements, qualifications, and skills needed..."></textarea>
+                            <small class="form-text text-muted">Be specific about education, experience, and skills</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Benefits & Perks</label>
+                            <textarea class="form-control" name="benefits" rows="3" 
+                                      placeholder="Health insurance, flexible hours, professional development..."></textarea>
+                            <small class="form-text text-muted">What makes this opportunity attractive?</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Application Deadline</label>
+                            <input type="date" class="form-control" name="deadline">
+                            <small class="form-text text-muted">When should applications be submitted by?</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Application URL <span class="text-danger">*</span></label>
+                            <input type="url" class="form-control" name="application_url" required 
+                                   placeholder="https://company.com/apply or https://forms.google.com/...">
+                            <small class="form-text text-muted">Link where candidates can apply (company website, form, etc.)</small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Post Job
+                            </button>
+                            <a href="{{ url_for('jobs') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

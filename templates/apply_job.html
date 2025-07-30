@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for {{ job[1] }} - StartSmart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('jobs') }}">Jobs</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('view_job', job_id=job[0]) }}">{{ job[1] }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Apply</li>
+                    </ol>
+                </nav>
+                <h1 class="h2 mb-3">Apply for Position</h1>
+                <div class="job-info-card mb-4">
+                    <h3 class="h4 text-primary">{{ job[1] }}</h3>
+                    <p class="h5 text-muted mb-2">{{ job[2] }}</p>
+                    <div class="d-flex flex-wrap gap-3 text-muted">
+                        <span><i class="fas fa-map-marker-alt me-1"></i>{{ job[4] }}</span>
+                        <span><i class="fas fa-briefcase me-1"></i>{{ job[6].title() if job[6] else 'Full-time' }}</span>
+                        {% if job[5] %}
+                        <span><i class="fas fa-dollar-sign me-1"></i>{{ job[5] }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>Application Details</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('submit_application', job_id=job[0]) }}">
+                        <!-- Cover Letter -->
+                        <div class="mb-4">
+                            <label for="cover_letter" class="form-label">
+                                <strong>Cover Letter <span class="text-danger">*</span></strong>
+                            </label>
+                            <textarea class="form-control" id="cover_letter" name="cover_letter" rows="6" 
+                                      placeholder="Tell us why you're interested in this position and why you'd be a great fit..." required></textarea>
+                            <div class="form-text">Minimum 100 characters. Explain your motivation and interest in this role.</div>
+                        </div>
+
+                        <!-- Relevant Experience -->
+                        <div class="mb-4">
+                            <label for="relevant_experience" class="form-label">
+                                <strong>Relevant Experience <span class="text-danger">*</span></strong>
+                            </label>
+                            <textarea class="form-control" id="relevant_experience" name="relevant_experience" rows="5" 
+                                      placeholder="Describe your relevant work experience, projects, internships, or skills that relate to this position..." required></textarea>
+                            <div class="form-text">Include any work experience, projects, internships, or relevant coursework.</div>
+                        </div>
+
+                        <!-- Portfolio URL (Optional) -->
+                        <div class="mb-4">
+                            <label for="portfolio_url" class="form-label">
+                                <strong>Portfolio/LinkedIn URL</strong> <span class="text-muted">(Optional)</span>
+                            </label>
+                            <input type="url" class="form-control" id="portfolio_url" name="portfolio_url" 
+                                   placeholder="https://linkedin.com/in/yourprofile or https://yourportfolio.com">
+                            <div class="form-text">Share your LinkedIn profile, portfolio, or personal website.</div>
+                        </div>
+
+                        <!-- Additional Questions -->
+                        <div class="mb-4">
+                            <label for="availability" class="form-label">
+                                <strong>When can you start?</strong>
+                            </label>
+                            <select class="form-select" id="availability" name="availability">
+                                <option value="immediately">Immediately</option>
+                                <option value="1-week">Within 1 week</option>
+                                <option value="2-weeks">Within 2 weeks</option>
+                                <option value="1-month">Within 1 month</option>
+                                <option value="negotiable">Negotiable</option>
+                            </select>
+                        </div>
+
+                        <!-- Confirmation -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirm_info" name="confirm_info" required>
+                                <label class="form-check-label" for="confirm_info">
+                                    I confirm that the information provided is accurate and complete.
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="agree_terms" name="agree_terms" required>
+                                <label class="form-check-label" for="agree_terms">
+                                    I agree to share my profile information with the employer.
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Application
+                            </button>
+                            <a href="{{ url_for('view_job', job_id=job[0]) }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Job
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Application Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li><strong>Be specific:</strong> Mention specific skills and experiences that match the job requirements.</li>
+                        <li><strong>Show enthusiasm:</strong> Express genuine interest in the company and role.</li>
+                        <li><strong>Quantify achievements:</strong> Use numbers and metrics where possible (e.g., "increased sales by 20%").</li>
+                        <li><strong>Proofread:</strong> Check for spelling and grammar errors before submitting.</li>
+                        <li><strong>Be authentic:</strong> Let your personality shine through while maintaining professionalism.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.job-info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.job-info-card h3, .job-info-card p {
+    color: white;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 12px;
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+</style>
+
+<script>
+// Character count for textareas
+document.addEventListener('DOMContentLoaded', function() {
+    const coverLetter = document.getElementById('cover_letter');
+    const experience = document.getElementById('relevant_experience');
+    
+    function addCharacterCount(textarea, minChars) {
+        const counter = document.createElement('div');
+        counter.className = 'form-text text-end';
+        counter.style.marginTop = '0.25rem';
+        textarea.parentNode.appendChild(counter);
+        
+        function updateCount() {
+            const count = textarea.value.length;
+            counter.textContent = `${count} characters`;
+            if (count < minChars) {
+                counter.className = 'form-text text-end text-danger';
+                counter.textContent = `${count}/${minChars} characters (minimum required)`;
+            } else {
+                counter.className = 'form-text text-end text-success';
+            }
+        }
+        
+        textarea.addEventListener('input', updateCount);
+        updateCount();
+    }
+    
+    addCharacterCount(coverLetter, 100);
+    addCharacterCount(experience, 50);
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const coverLetter = document.getElementById('cover_letter').value;
+    const experience = document.getElementById('relevant_experience').value;
+    
+    if (coverLetter.length < 100) {
+        e.preventDefault();
+        alert('Cover letter must be at least 100 characters long.');
+        return;
+    }
+    
+    if (experience.length < 50) {
+        e.preventDefault();
+        alert('Relevant experience must be at least 50 characters long.');
+        return;
+    }
+});
+</script>
+{% endblock %}
