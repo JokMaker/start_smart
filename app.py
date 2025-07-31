@@ -11,6 +11,8 @@ import sqlite3
 import os
 import re
 import random
+import secrets
+import string
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -56,9 +58,9 @@ if MAIL_ENABLED:
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER') or 'your-email@gmail.com'
+    app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER') or 'j.kur@alustudent.com'
     app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS') or 'your-app-password'
-    app.config['MAIL_DEFAULT_SENDER'] = 'StartSmart Platform <noreply@startsmart.com>'
+    app.config['MAIL_DEFAULT_SENDER'] = 'StartSmart Platform <j.kur@alustudent.com>'
     mail = Mail(app)
 else:
     mail = None
@@ -72,17 +74,20 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Email notification functions
-def send_email(to_email, subject, body):
+def send_email(to_email, subject, body, html_body=None):
     if not MAIL_ENABLED or not mail:
-        print(f"Email notification: {subject} to {to_email}")
+        print(f"📧 Email notification: {subject} to {to_email}")
         return False
     try:
         msg = Message(subject, recipients=[to_email])
         msg.body = body
+        if html_body:
+            msg.html = html_body
         mail.send(msg)
+        print(f"✅ Email sent successfully to {to_email}")
         return True
     except Exception as e:
-        print(f"Email error: {e}")
+        print(f"❌ Email error: {e}")
         return False
 
 def notify_new_job(job_title, company):
@@ -112,9 +117,61 @@ def sanitize_input(text):
         return ''
     return str(text).strip()[:500]
 
+def generate_reset_token():
+    """Generate secure password reset token"""
+    return secrets.token_urlsafe(32)
+
+def create_reset_token(user_id):
+    """Create password reset token for user"""
+    token = generate_reset_token()
+    expires_at = datetime.now() + timedelta(minutes=30)
+    
+    conn = sqlite3.connect('startsmart.db')
+    c = conn.cursor()
+    
+    # Invalidate old tokens
+    c.execute("UPDATE password_reset_tokens SET used = 1 WHERE user_id = ?", (user_id,))
+    
+    # Create new token
+    c.execute("INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
+              (user_id, token, expires_at))
+    
+    conn.commit()
+    conn.close()
+    return token
+
+def validate_reset_token(token):
+    """Validate password reset token"""
+    conn = sqlite3.connect('startsmart.db')
+    c = conn.cursor()
+    
+    c.execute("""SELECT user_id FROM password_reset_tokens 
+                 WHERE token = ? AND used = 0 AND expires_at > ?""",
+              (token, datetime.now()))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    return result[0] if result else None
+
 def init_db():
     from db_setup import setup_database
     setup_database()
+    
+    # Add password reset table
+    conn = sqlite3.connect('startsmart.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        used INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )''')
+    conn.commit()
+    conn.close()
 
 @app.route('/')
 def home():
@@ -1201,6 +1258,93 @@ def notifications():
     conn.close()
     
     return render_template('notifications.html', notifications=notifications_list)
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    """Handle forgot password requests"""
+    if request.method == 'POST':
+        email = sanitize_input(request.form.get('email', '')).lower().strip()
+        
+        if not email or not validate_email(email):
+            flash('Please enter a valid email address.', 'error')
+            return render_template('forgot_password.html')
+        
+        conn = sqlite3.connect('startsmart.db')
+        c = conn.cursor()
+        c.execute("SELECT id, name FROM users WHERE LOWER(email) = ?", (email,))
+        user = c.fetchone()
+        conn.close()
+        
+        if user:
+            user_id, name = user
+            token = create_reset_token(user_id)
+            
+            # Send reset email
+            reset_url = f"https://start-smart.onrender.com/reset-password/{token}"
+            subject = "Password Reset - StartSmart"
+            body = f"""Hello {name},
+
+You requested a password reset for your StartSmart account.
+
+Click the link below to reset your password:
+{reset_url}
+
+This link will expire in 30 minutes.
+
+If you didn't request this, please ignore this email.
+
+Best regards,
+StartSmart Team"""
+            
+            if send_email(email, subject, body):
+                flash('Password reset instructions have been sent to your email.', 'success')
+            else:
+                flash('Password reset link created. Check your email.', 'info')
+        else:
+            # Don't reveal if email exists or not for security
+            flash('If an account with that email exists, password reset instructions have been sent.', 'info')
+        
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """Handle password reset with token"""
+    user_id = validate_reset_token(token)
+    
+    if not user_id:
+        flash('Invalid or expired reset token. Please request a new password reset.', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    if request.method == 'POST':
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'error')
+            return render_template('reset_password.html', token=token)
+        
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('reset_password.html', token=token)
+        
+        # Update password
+        password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+        
+        conn = sqlite3.connect('startsmart.db')
+        c = conn.cursor()
+        
+        c.execute("UPDATE users SET password = ? WHERE id = ?", (password_hash, user_id))
+        c.execute("UPDATE password_reset_tokens SET used = 1 WHERE token = ?", (token,))
+        
+        conn.commit()
+        conn.close()
+        
+        flash('Your password has been successfully reset. You can now log in.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html', token=token)
 
 @app.route('/logout')
 def logout():
