@@ -71,7 +71,7 @@ http://localhost:5000
 
 ## 🌐 Live Demo
 
-**Public URL:** [Add your deployed URL here]
+**Public URL:** https://start-smart.onrender.com
 
 ## 📋 Documentation
 
