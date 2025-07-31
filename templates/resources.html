@@ -7,47 +7,276 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-white">📚 Learning Resources</h2>
-            {% if session.user_type == 'mentor' %}
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#uploadResourceModal">Upload Resource</button>
-            {% endif %}
+            <div class="d-flex gap-2">
+                {% if session.user_type == 'mentor' %}
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#uploadResourceModal">
+                        <i class="fas fa-upload me-1"></i>Upload Resource
+                    </button>
+                {% endif %}
+                {% if session.user_type in ['mentor', 'admin'] %}
+                    <a href="{{ url_for('refresh_resources') }}" class="btn btn-info">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh Content
+                    </a>
+                {% endif %}
+            </div>
         </div>
         
+        <!-- Category Filter Cards -->
         <div class="row mb-4">
             <div class="col-6 col-md-3 mb-3">
                 <a href="{{ url_for('resources', category='Templates') }}" class="text-decoration-none">
-                    <div class="card text-center category-card">
+                    <div class="card text-center category-card {% if selected_category == 'Templates' %}active{% endif %}">
                         <div class="card-body">
                             <div style="font-size: 2rem;">📄</div>
                             <h6>Templates</h6>
                             <small>Business & Career</small>
+                            {% for cat in categories %}
+                                {% if cat.name == 'Templates' %}
+                                    <div class="badge bg-primary">{{ cat.count }}</div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-6 col-md-3 mb-3">
                 <a href="{{ url_for('resources', category='Videos') }}" class="text-decoration-none">
-                    <div class="card text-center category-card">
+                    <div class="card text-center category-card {% if selected_category == 'Videos' %}active{% endif %}">
                         <div class="card-body">
                             <div style="font-size: 2rem;">🎥</div>
                             <h6>Videos</h6>
                             <small>Tutorials & Guides</small>
+                            {% for cat in categories %}
+                                {% if cat.name == 'Videos' %}
+                                    <div class="badge bg-primary">{{ cat.count }}</div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-6 col-md-3 mb-3">
                 <a href="{{ url_for('resources', category='Case Studies') }}" class="text-decoration-none">
-                    <div class="card text-center category-card">
+                    <div class="card text-center category-card {% if selected_category == 'Case Studies' %}active{% endif %}">
                         <div class="card-body">
                             <div style="font-size: 2rem;">📊</div>
                             <h6>Case Studies</h6>
                             <small>Real Examples</small>
+                            {% for cat in categories %}
+                                {% if cat.name == 'Case Studies' %}
+                                    <div class="badge bg-primary">{{ cat.count }}</div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-6 col-md-3 mb-3">
                 <a href="{{ url_for('resources', category='Guides') }}" class="text-decoration-none">
+                    <div class="card text-center category-card {% if selected_category == 'Guides' %}active{% endif %}">
+                        <div class="card-body">
+                            <div style="font-size: 2rem;">💡</div>
+                            <h6>Guides</h6>
+                            <small>Step-by-step</small>
+                            {% for cat in categories %}
+                                {% if cat.name == 'Guides' %}
+                                    <div class="badge bg-primary">{{ cat.count }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <form method="GET" class="d-flex">
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    <input type="text" class="form-control me-2" name="search" 
+                           placeholder="Search resources..." value="{{ search }}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div class="col-md-4 text-end">
+                {% if selected_category or search %}
+                    <a href="{{ url_for('resources') }}" class="btn btn-outline-light">Clear Filters</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Dynamic Content Display -->
+        {% if selected_category == 'Templates' or (not selected_category and dynamic_templates) %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="text-white mb-3">
+                    <i class="fas fa-file-alt me-2"></i>Professional Templates
+                    {% if selected_category == 'Templates' %}
+                        <span class="badge bg-success ms-2">Live Content</span>
+                    {% endif %}
+                </h3>
+                <div class="row">
+                    {% for template in dynamic_templates %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 resource-card">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-file-download text-primary me-2"></i>
+                                    <small class="text-muted">{{ template.type }}</small>
+                                </div>
+                                <h5 class="card-title">{{ template.title }}</h5>
+                                <p class="card-text flex-grow-1">{{ template.description }}</p>
+                                <div class="mt-auto">
+                                    <span class="badge bg-info mb-2">{{ template.category }}</span>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ template.url }}" target="_blank" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i>Download Template
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if selected_category == 'Videos' or (not selected_category and dynamic_videos) %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="text-white mb-3">
+                    <i class="fab fa-youtube me-2"></i>Educational Videos
+                    {% if selected_category == 'Videos' %}
+                        <span class="badge bg-danger ms-2">YouTube Integration</span>
+                    {% endif %}
+                </h3>
+                <div class="row">
+                    {% for video in dynamic_videos %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 resource-card video-card">
+                            {% if video.thumbnail %}
+                            <img src="{{ video.thumbnail }}" class="card-img-top video-thumbnail" alt="{{ video.title }}">
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fab fa-youtube text-danger me-2"></i>
+                                    <small class="text-muted">{{ video.channel }}</small>
+                                </div>
+                                <h5 class="card-title">{{ video.title }}</h5>
+                                <p class="card-text flex-grow-1">{{ video.description }}</p>
+                                <div class="mt-auto">
+                                    <span class="badge bg-danger mb-2">Video Tutorial</span>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ video.url }}" target="_blank" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-play me-1"></i>Watch Video
+                                        </a>
+                                    </div>
+                                    {% if video.published %}
+                                    <small class="text-muted d-block mt-2">Published: {{ video.published[:10] }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if selected_category == 'Case Studies' or (not selected_category and dynamic_case_studies) %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="text-white mb-3">
+                    <i class="fas fa-chart-line me-2"></i>Success Case Studies
+                    {% if selected_category == 'Case Studies' %}
+                        <span class="badge bg-warning ms-2">Real Stories</span>
+                    {% endif %}
+                </h3>
+                <div class="row">
+                    {% for case_study in dynamic_case_studies %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 resource-card case-study-card">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-trophy text-warning me-2"></i>
+                                    <small class="text-muted">{{ case_study.category }}</small>
+                                </div>
+                                <h5 class="card-title">{{ case_study.title }}</h5>
+                                <p class="card-text flex-grow-1">{{ case_study.description }}</p>
+                                <div class="mt-auto">
+                                    <span class="badge bg-warning text-dark mb-2">Case Study</span>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ case_study.url }}" target="_blank" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>Read Case Study
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- User Uploaded Resources -->
+        {% if resources %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-white mb-3">
+                    <i class="fas fa-users me-2"></i>Community Resources
+                    <span class="badge bg-secondary ms-2">{{ resources|length }} items</span>
+                </h3>
+                <div class="row">
+                    {% for resource in resources %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100 resource-card">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user text-success me-2"></i>
+                                    <small class="text-muted">{{ resource[8] or 'Community' }}</small>
+                                </div>
+                                <h5 class="card-title">{{ resource[1] }}</h5>
+                                <p class="card-text flex-grow-1">{{ resource[2] }}</p>
+                                <div class="mt-auto">
+                                    <span class="badge bg-primary mb-2">{{ resource[3] }}</span>
+                                    <div class="d-flex gap-2">
+                                        {% if resource[5] %}
+                                        <a href="{{ resource[5] }}" target="_blank" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>Access Resource
+                                        {% elif resource[4] %}
+                                        <a href="{{ url_for('download_resource', resource_id=resource[0]) }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i>Download
+                                        {% endif %}
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">{{ resource[7] }} views</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- No Resources Message -->
+        {% if not resources and not dynamic_templates and not dynamic_videos and not dynamic_case_studies %}
+        <div class="text-center text-white py-5">
+            <i class="fas fa-search fa-3x mb-3 opacity-50"></i>
+            <h4>No resources found</h4>
+            <p>Try adjusting your search terms or browse different categories.</p>
+            <a href="{{ url_for('resources') }}" class="btn btn-primary">Browse All Resources</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
                     <div class="card text-center category-card">
                         <div class="card-body">
                             <div style="font-size: 2rem;">💡</div>
@@ -87,40 +316,6 @@
                     </div>
                 </div>
                 {% endfor %}
-            {% else %}
-                <!-- Sample Resources -->
-                {% set sample_resources = [
-                    ('Business Plan Template', 'Complete template for creating professional business plans', 'Templates', 'https://www.sba.gov/business-guide/plan-your-business/write-your-business-plan'),
-                    ('Startup Funding Guide', 'Comprehensive guide to securing funding for your startup', 'Guides', 'https://www.entrepreneur.com/starting-a-business/funding'),
-                    ('Resume Builder', 'Professional resume templates for African job seekers', 'Templates', 'https://www.indeed.com/career-advice/resumes-cover-letters'),
-                    ('Interview Preparation', 'Video series on acing job interviews', 'Videos', 'https://www.linkedin.com/learning/topics/interview-skills'),
-                    ('Market Research Template', 'Tools and templates for conducting market research', 'Templates', 'https://blog.hubspot.com/marketing/market-research-buyers-journey-guide'),
-                    ('Networking Guide', 'How to build professional networks in Africa', 'Guides', 'https://www.harvard.edu/networking-guide')
-                ] %}
-                
-                {% for resource in sample_resources %}
-                <div class="col-12 col-md-6 col-lg-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ resource[0] }}</h5>
-                            <p class="card-text flex-grow-1">{{ resource[1] }}</p>
-                            <div class="mt-auto">
-                                <span class="badge bg-primary mb-2">{{ resource[2] }}</span>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ resource[3] }}" target="_blank" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-external-link-alt me-1"></i>Read More
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-    </div>
-</div>
-
 <!-- Upload Resource Modal -->
 {% if session.user_type == 'mentor' %}
 <div class="modal fade" id="uploadResourceModal" tabindex="-1">
@@ -151,8 +346,13 @@
                         </select>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">External URL</label>
+                        <input type="url" class="form-control" name="external_url" placeholder="https://example.com/resource">
+                        <small class="form-text text-muted">Link to external resource (optional)</small>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Upload File</label>
-                        <input type="file" class="form-control" name="resource_file">
+                        <input type="file" class="form-control" name="file">
                         <small class="form-text text-muted">Optional - PDF, DOC, images, etc.</small>
                     </div>
                 </div>
@@ -168,17 +368,121 @@
 
 <style>
 .category-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
+    border: 2px solid transparent;
 }
 
 .category-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: var(--primary);
 }
 
-.category-card:hover .card-body {
-    color: var(--primary);
+.category-card.active {
+    border-color: var(--primary);
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: white;
+}
+
+.resource-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.resource-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.video-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.video-thumbnail {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.video-thumbnail:hover {
+    opacity: 0.8;
+}
+
+.case-study-card {
+    border-left: 4px solid var(--warning);
+}
+
+.video-card {
+    border-left: 4px solid #dc3545;
+}
+
+.resource-card:not(.video-card):not(.case-study-card) {
+    border-left: 4px solid var(--primary);
+}
+
+.badge {
+    font-size: 0.7em;
+}
+
+.btn-sm {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .category-card {
+        margin-bottom: 1rem;
+    }
+    
+    .resource-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Loading animation for dynamic content */
+.loading-placeholder {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 </style>
+
+<script>
+// Add interactivity for better user experience
+document.addEventListener('DOMContentLoaded', function() {
+    // Video thumbnail click to play
+    const videoThumbnails = document.querySelectorAll('.video-thumbnail');
+    videoThumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+            const videoUrl = this.closest('.card').querySelector('a[href*="youtube"]').href;
+            window.open(videoUrl, '_blank');
+        });
+    });
+    
+    // Track resource clicks for analytics
+    const resourceLinks = document.querySelectorAll('a[href*="http"]');
+    resourceLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            // Could implement analytics tracking here
+            console.log('Resource accessed:', this.href);
+        });
+    });
+    
+    // Add loading states for dynamic content
+    const dynamicSections = document.querySelectorAll('[data-dynamic]');
+    dynamicSections.forEach(section => {
+        section.style.opacity = '0';
+        setTimeout(() => {
+            section.style.transition = 'opacity 0.5s ease';
+            section.style.opacity = '1';
+        }, 100);
+    });
+});
+</script>
 {% endblock %}
