@@ -13,12 +13,34 @@ import re
 import random
 import secrets
 import string
+import logging
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Setup logging for production
+if os.environ.get('FLASK_ENV') == 'production':
+    logging.basicConfig(
+        filename='startsmart.log',
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    )
+else:
+    logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production-2025'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
+# Production Security Settings
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 
 # Custom Jinja2 filters
 @app.template_filter('datetime')
@@ -72,6 +94,25 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Error Handlers for Production
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('error.html', 
+                         error_code=404, 
+                         error_message="Page not found"), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('error.html', 
+                         error_code=500, 
+                         error_message="Internal server error"), 500
+
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template('error.html', 
+                         error_code=403, 
+                         error_message="Access forbidden"), 403
 
 # Email notification functions
 def send_email(to_email, subject, body, html_body=None):
@@ -249,6 +290,31 @@ def home():
                           featured_startups=featured_startups,
                           founder_names=founder_names,
                           founder_images=founder_images)
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for monitoring"""
+    try:
+        # Check database connectivity
+        conn = sqlite3.connect('startsmart.db')
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM users")
+        user_count = c.fetchone()[0]
+        conn.close()
+        
+        return {
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'database': 'connected',
+            'users': user_count
+        }, 200
+    except Exception as e:
+        app.logger.error(f"Health check failed: {str(e)}")
+        return {
+            'status': 'unhealthy',
+            'timestamp': datetime.now().isoformat(),
+            'error': str(e)
+        }, 500
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -1919,16 +1985,33 @@ if __name__ == '__main__':
     # Ensure database is properly initialized
     try:
         init_db()
-        print("✅ Database initialized successfully")
+        print("Database initialized successfully")
+        
+        # Add sample data for production if database is empty
+        conn = sqlite3.connect('startsmart.db')
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM jobs WHERE is_active = 1")
+        job_count = c.fetchone()[0]
+        conn.close()
+        
+        if job_count == 0:
+            try:
+                from populate_production_data import populate_production_jobs, populate_sample_users
+                populate_production_jobs()
+                populate_sample_users()
+                print("Sample data populated for production")
+            except Exception as e:
+                print(f"Sample data population failed: {e}")
+        
     except Exception as e:
-        print(f"⚠️ Database initialization error: {e}")
+        print(f"Database initialization error: {e}")
         # Try manual database setup
         try:
             from fix_deployment import fix_deployment_database
             fix_deployment_database()
-            print("✅ Manual database setup completed")
+            print("Manual database setup completed")
         except Exception as e2:
-            print(f"❌ Manual database setup failed: {e2}")
+            print(f"Manual database setup failed: {e2}")
     
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)

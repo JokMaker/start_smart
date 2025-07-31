@@ -10,6 +10,11 @@ ENV/
 env.bak/
 venv.bak/
 
+# Environment Variables
+.env
+.env.local
+.env.production
+
 # Flask
 instance/
 .webassets-cache
@@ -18,6 +23,20 @@ instance/
 *.db
 *.sqlite
 *.sqlite3
+
+# Logs
+*.log
+logs/
+backup.log
+startsmart.log
+
+# Backups
+backups/
+*.backup
+
+# OS
+.DS_Store
+Thumbs.db
 startsmart.db
 
 # IDE
