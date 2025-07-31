@@ -39,4 +39,7 @@ except Exception as e:
     print('Manual database creation completed')
 "
 
+# Add demo jobs for video
+python add_jobs_for_video.py
+
 echo "Build completed successfully"
