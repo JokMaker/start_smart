@@ -16,9 +16,98 @@ import string
 import logging
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from resource_manager import resource_manager
 
 # Load environment variables
 load_dotenv()
+
+# Deployment debugging
+import sys
+print(f"🐍 Python version: {sys.version}")
+print(f"📁 Working directory: {os.getcwd()}")
+print(f"📋 Files in directory: {[f for f in os.listdir('.') if f.endswith(('.py', '.db'))]}")
+
+def ensure_database():
+    """Ensure database exists and is properly initialized for deployment"""
+    if not os.path.exists('startsmart.db'):
+        print("📊 Database missing, initializing...")
+        try:
+            from db_setup import setup_database
+            setup_database()
+            print("✅ Database initialized successfully")
+        except Exception as e:
+            print(f"❌ Database initialization failed: {e}")
+            # Create minimal database if setup fails
+            conn = sqlite3.connect('startsmart.db')
+            c = conn.cursor()
+            c.execute("""CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                name TEXT NOT NULL,
+                user_type TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                is_active INTEGER DEFAULT 1
+            )""")
+            c.execute("""CREATE TABLE IF NOT EXISTS jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                company TEXT NOT NULL,
+                description TEXT,
+                location TEXT,
+                salary_range TEXT,
+                job_type TEXT,
+                posted_by INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                application_url TEXT,
+                requirements TEXT,
+                benefits TEXT,
+                deadline DATE,
+                is_active INTEGER DEFAULT 1,
+                FOREIGN KEY (posted_by) REFERENCES users (id)
+            )""")
+            c.execute("""CREATE TABLE IF NOT EXISTS applications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                job_id INTEGER,
+                status TEXT DEFAULT 'pending',
+                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                cover_letter TEXT,
+                relevant_experience TEXT,
+                portfolio_url TEXT,
+                FOREIGN KEY (user_id) REFERENCES users (id),
+                FOREIGN KEY (job_id) REFERENCES jobs (id)
+            )""")
+            c.execute("""CREATE TABLE IF NOT EXISTS resources (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                description TEXT,
+                category TEXT,
+                file_url TEXT,
+                external_url TEXT,
+                uploaded_by INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                view_count INTEGER DEFAULT 0,
+                FOREIGN KEY (uploaded_by) REFERENCES users (id)
+            )""")
+            c.execute("""CREATE TABLE IF NOT EXISTS notifications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                message TEXT NOT NULL,
+                notification_type TEXT,
+                related_id INTEGER,
+                is_read INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )""")
+            conn.commit()
+            conn.close()
+            print("✅ Minimal database created")
+    else:
+        print("✅ Database file exists")
+
+# Ensure database exists before starting Flask app
+ensure_database()
 
 # Setup logging for production
 if os.environ.get('FLASK_ENV') == 'production':
@@ -36,12 +125,21 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Production Security Settings - Fixed for Render deployment
-if os.environ.get('FLASK_ENV') == 'production':
-    # Note: SESSION_COOKIE_SECURE disabled for Render deployment testing
-    # app.config['SESSION_COOKIE_SECURE'] = True  # Disabled temporarily
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+
+# Only enable secure cookies if we're definitely on HTTPS
+if os.environ.get('FLASK_ENV') == 'production' and os.environ.get('FORCE_HTTPS') == 'true':
+    app.config['SESSION_COOKIE_SECURE'] = True
+else:
+    # Disable secure cookies for HTTP deployments (like Render free tier)
+    app.config['SESSION_COOKIE_SECURE'] = False
+
+print(f"🔒 Session configuration:")
+print(f"   SECURE: {app.config.get('SESSION_COOKIE_SECURE', False)}")
+print(f"   HTTPONLY: {app.config.get('SESSION_COOKIE_HTTPONLY', False)}")
+print(f"   SAMESITE: {app.config.get('SESSION_COOKIE_SAMESITE', 'None')}")
 
 # Custom Jinja2 filters
 @app.template_filter('datetime')
@@ -232,7 +330,7 @@ def home():
     c.execute("SELECT COUNT(*) FROM users WHERE user_type = 'mentor'")
     mentor_count = c.fetchone()[0]
     
-    c.execute("""SELECT id, title, company, description, location, job_type, salary, 
+    c.execute("""SELECT id, title, company, description, location, job_type, salary_range, 
                  application_url, created_at FROM jobs 
                  WHERE is_active = 1
                  ORDER BY created_at DESC LIMIT 4""")
@@ -261,19 +359,16 @@ def home():
         skills = [skill[0] for skill in c.fetchall()]
         job_skills[job[0]] = skills
     
-    c.execute("""SELECT id, name, description, industry, founder_id 
+    c.execute("""SELECT id, name, description, industry, founder 
                  FROM startups ORDER BY created_at DESC LIMIT 3""")
     featured_startups = c.fetchall()
     
     founder_names = {}
     founder_images = {}
     for startup in featured_startups:
-        founder_id = startup[4]  # founder_id is now at index 4 (was 5 when stage column existed)
-        c.execute("SELECT name, profile_image FROM users WHERE id = ?", (founder_id,))
-        founder = c.fetchone()
-        if founder:
-            founder_names[founder_id] = founder[0]
-            founder_images[founder_id] = founder[1] if founder[1] else 'default-profile.jpg'
+        founder_name = startup[4]  # founder is now at index 4 (text field, not ID)
+        founder_names[startup[0]] = founder_name  # Use startup ID as key
+        founder_images[startup[0]] = 'default-profile.jpg'  # Default image since no ID lookup
     
     conn.close()
     
@@ -315,6 +410,52 @@ def health_check():
             'status': 'unhealthy',
             'timestamp': datetime.now().isoformat(),
             'error': str(e)
+        }, 500
+
+@app.route('/test-auth')
+def test_auth():
+    """Test route for debugging authentication on deployment"""
+    try:
+        # Test database connection
+        conn = sqlite3.connect('startsmart.db')
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM users")
+        user_count = c.fetchone()[0]
+        
+        # Get a sample user for testing
+        c.execute("SELECT id, email, name, user_type FROM users LIMIT 1")
+        sample_user = c.fetchone()
+        conn.close()
+        
+        # Test session
+        session['test'] = 'working'
+        test_session = session.get('test', 'not working')
+        
+        # Test password hashing
+        from werkzeug.security import generate_password_hash, check_password_hash
+        test_password = "TestPassword123!"
+        hashed = generate_password_hash(test_password)
+        verified = check_password_hash(hashed, test_password)
+        
+        return {
+            'status': 'authentication_test',
+            'database': 'connected',
+            'users_count': user_count,
+            'sample_user': sample_user,
+            'session': test_session,
+            'password_hashing': verified,
+            'working_directory': os.getcwd(),
+            'database_exists': os.path.exists('startsmart.db'),
+            'python_version': sys.version,
+            'timestamp': datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            'status': 'error',
+            'error': str(e),
+            'working_directory': os.getcwd(),
+            'database_exists': os.path.exists('startsmart.db'),
+            'timestamp': datetime.now().isoformat()
         }, 500
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -399,16 +540,21 @@ def register():
             conn = sqlite3.connect('startsmart.db')
             c = conn.cursor()
 
+            # Debug: Print connection status
+            print(f"🔍 Database connection established for registration")
+
             # Check if email already exists
             c.execute("SELECT id FROM users WHERE LOWER(email) = ?", (email,))
             existing_user = c.fetchone()
 
             if existing_user:
+                print(f"⚠️ Registration attempt with existing email: {email}")
                 flash('An account with this email already exists. Please use a different email or try logging in.', 'error')
                 return render_template('register.html', form_data=request.form)
 
             # Create password hash
             password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+            print(f"🔐 Password hashed successfully for: {email}")
 
             # Insert new user with enhanced data
             c.execute("""INSERT INTO users (email, password, name, user_type, created_at, is_active) 
@@ -417,10 +563,10 @@ def register():
             conn.commit()
 
             new_user_id = c.lastrowid
+            print(f"✅ New user registered successfully: {name} ({email}) - ID: {new_user_id}")
             
             # Success message and redirect
             flash('Registration successful! Welcome to StartSmart. Please log in with your credentials.', 'success')
-            print(f"✅ New user registered: {name} ({email}) - ID: {new_user_id}")
             
             # Optional: Send welcome email
             if MAIL_ENABLED:
@@ -445,16 +591,17 @@ The StartSmart Team"""
             return redirect(url_for('login'))
 
         except sqlite3.Error as e:
-            flash('A database error occurred. Please try again later.', 'error')
             print(f"❌ Database error during registration: {e}")
+            flash('A database error occurred. Please try again later.', 'error')
             return render_template('register.html', form_data=request.form)
         except Exception as e:
-            flash('Registration failed due to an unexpected error. Please try again.', 'error')
             print(f"❌ Unexpected error during registration: {e}")
+            flash('Registration failed due to an unexpected error. Please try again.', 'error')
             return render_template('register.html', form_data=request.form)
         finally:
             if conn:
                 conn.close()
+                print("🔒 Database connection closed")
     
     return render_template('register.html')
 
@@ -487,51 +634,64 @@ def login():
         try:
             conn = sqlite3.connect('startsmart.db')
             c = conn.cursor()
+            
+            print(f"🔍 Login attempt for: {email}")
+            print(f"🔍 Database connection established for login")
+            
             c.execute("SELECT id, name, password, email, user_type FROM users WHERE LOWER(email) = ?", (email,))
             user = c.fetchone()
             
-            print(f"🔍 Login attempt for: {email}")  # Debug log
-            print(f"🔍 User found: {user is not None}")  # Debug log
+            print(f"🔍 User found in database: {user is not None}")
             
             if user and check_password_hash(user[2], password):
+                print(f"✅ Password verification successful for: {email}")
+                
                 # Successful login
                 session['user_id'] = user[0]
                 session['user_name'] = user[1]
                 session['user_email'] = user[3]
                 session['user_type'] = user[4]
                 
+                print(f"🔒 Session data set for user: {user[1]}")
+                
                 if remember_me:
                     session.permanent = True
+                    print("🔒 Session marked as permanent")
                 
                 # Update last login
                 try:
                     c.execute("UPDATE users SET last_login = ? WHERE id = ?", 
                              (datetime.now(), user[0]))
                     conn.commit()
+                    print("📅 Last login updated")
                 except sqlite3.Error as e:
                     print(f"⚠️ Could not update last_login: {e}")
 
                 flash(f'Welcome back, {user[1]}!')
-                print(f"✅ User logged in: {user[1]} ({email})")
+                print(f"✅ User logged in successfully: {user[1]} ({email})")
                 
                 next_page = request.args.get('next')
                 return redirect(next_page or url_for('dashboard'))
             else:
-                print(f"❌ Login failed for: {email}")  # Debug log
+                if user:
+                    print(f"❌ Password verification failed for: {email}")
+                else:
+                    print(f"❌ User not found for email: {email}")
                 flash('Invalid email or password. Please try again.')
                 return render_template('login.html', form_data=request.form)
 
         except sqlite3.Error as e:
-            flash('Database error occurred. Please try again.')
             print(f"❌ Database error during login: {e}")
+            flash('Database error occurred. Please try again.')
             return render_template('login.html', form_data=request.form)
         except Exception as e:
-            flash('Login failed. Please try again.')
             print(f"❌ General error during login: {e}")
+            flash('Login failed. Please try again.')
             return render_template('login.html', form_data=request.form)
         finally:
             if conn:
                 conn.close()
+                print("🔒 Database connection closed")
     return render_template('login.html')
 
 @app.route('/dashboard')
@@ -1137,6 +1297,16 @@ def resources():
     conn = sqlite3.connect('startsmart.db')
     c = conn.cursor()
     
+    # Initialize dynamic resources if database is empty
+    c.execute("SELECT COUNT(*) FROM resources")
+    resource_count = c.fetchone()[0]
+    
+    if resource_count < 10:  # Populate with dynamic content if few resources
+        try:
+            resource_manager.save_resources_to_db()
+        except Exception as e:
+            print(f"Error populating resources: {e}")
+    
     query = "SELECT r.id, r.title, r.description, r.category, r.file_url, r.external_url, r.created_at, r.view_count, u.name as uploader_name FROM resources r LEFT JOIN users u ON r.uploaded_by = u.id WHERE 1=1"
     params = []
     
@@ -1159,9 +1329,50 @@ def resources():
     categories_data = c.fetchall()
     categories = [{'name': cat[0], 'count': cat[1]} for cat in categories_data]
     
+    # Get dynamic content based on category
+    dynamic_templates = []
+    dynamic_videos = []
+    dynamic_case_studies = []
+    
+    if category == 'Templates':
+        dynamic_templates = resource_manager.get_templates(category)
+    elif category == 'Videos':
+        dynamic_videos = resource_manager.get_youtube_videos('business', 8)
+        dynamic_videos.extend(resource_manager.get_youtube_videos('career', 4))
+    elif category == 'Case Studies':
+        dynamic_case_studies = resource_manager.get_case_studies()
+    elif not category:  # Show samples of each on main page
+        dynamic_templates = resource_manager.get_templates('business')[:3]
+        dynamic_videos = resource_manager.get_youtube_videos('business', 3)
+        dynamic_case_studies = resource_manager.get_case_studies()[:2]
+    
     conn.close()
-    return render_template('resources.html', resources=resources_list, categories=categories, 
-                          selected_category=category, search=search)
+    return render_template('resources.html', 
+                          resources=resources_list, 
+                          categories=categories, 
+                          selected_category=category, 
+                          search=search,
+                          dynamic_templates=dynamic_templates,
+                          dynamic_videos=dynamic_videos,
+                          dynamic_case_studies=dynamic_case_studies)
+
+@app.route('/refresh-resources')
+def refresh_resources():
+    """Admin route to refresh dynamic resources"""
+    if 'user_id' not in session or session.get('user_type') not in ['admin', 'mentor']:
+        flash('Access denied. Only administrators can refresh resources.', 'error')
+        return redirect(url_for('resources'))
+    
+    try:
+        success = resource_manager.refresh_content()
+        if success:
+            flash('Resources refreshed successfully! New templates, videos, and case studies have been added.', 'success')
+        else:
+            flash('Failed to refresh resources. Please try again later.', 'error')
+    except Exception as e:
+        flash(f'Error refreshing resources: {str(e)}', 'error')
+    
+    return redirect(url_for('resources'))
 
 @app.route('/upload-resource', methods=['GET', 'POST'])
 def upload_resource():
