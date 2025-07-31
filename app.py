@@ -1888,18 +1888,12 @@ def mark_all_notifications_read():
 
 @app.route('/import-jobs')
 def import_jobs():
-    """Import jobs from Adzuna API"""
+    """Import jobs functionality - disabled since Adzuna integration removed"""
     if 'user_id' not in session or session.get('user_type') not in ['admin', 'recruiter']:
         flash('Only admins and recruiters can import jobs!')
         return redirect(url_for('login'))
     
-    try:
-        from adzuna_integration import import_jobs_from_adzuna
-        count = import_jobs_from_adzuna()
-        flash(f'Successfully imported {count} new jobs!', 'success')
-    except Exception as e:
-        flash(f'Job import failed: {e}', 'error')
-    
+    flash('Job import feature is currently disabled. Please use manual job posting.', 'info')
     return redirect(url_for('jobs'))
 
 @app.route('/admin')
@@ -1987,31 +1981,34 @@ if __name__ == '__main__':
         init_db()
         print("Database initialized successfully")
         
-        # Add sample data for production if database is empty
+        # Create demo users for authentication testing
         conn = sqlite3.connect('startsmart.db')
         c = conn.cursor()
-        c.execute("SELECT COUNT(*) FROM jobs WHERE is_active = 1")
-        job_count = c.fetchone()[0]
-        conn.close()
         
-        if job_count == 0:
-            try:
-                from populate_production_data import populate_production_jobs, populate_sample_users
-                populate_production_jobs()
-                populate_sample_users()
-                print("Sample data populated for production")
-            except Exception as e:
-                print(f"Sample data population failed: {e}")
+        # Check if demo users exist
+        c.execute("SELECT COUNT(*) FROM users")
+        user_count = c.fetchone()[0]
+        
+        if user_count == 0:
+            print("Creating demo users for authentication...")
+            demo_users = [
+                ('student@demo.com', 'Demo123!', 'Demo Student', 'student'),
+                ('recruiter@demo.com', 'Demo123!', 'Demo Recruiter', 'recruiter'),
+                ('admin@demo.com', 'Demo123!', 'Demo Admin', 'admin')
+            ]
+            
+            for email, password, name, user_type in demo_users:
+                password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+                c.execute("""INSERT INTO users (email, password, name, user_type, created_at, is_active) 
+                             VALUES (?, ?, ?, ?, ?, ?)""",
+                         (email, password_hash, name, user_type, datetime.now(), 1))
+                print(f"Created demo user: {email}")
+        
+        conn.commit()
+        conn.close()
         
     except Exception as e:
         print(f"Database initialization error: {e}")
-        # Try manual database setup
-        try:
-            from fix_deployment import fix_deployment_database
-            fix_deployment_database()
-            print("Manual database setup completed")
-        except Exception as e2:
-            print(f"Manual database setup failed: {e2}")
     
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)

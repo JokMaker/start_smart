@@ -5,7 +5,16 @@ This will ensure database exists and demo users are created
 import sqlite3
 import os
 from datetime import datetime
-from werkzeug.security import generate_password_hash
+
+# Import werkzeug with fallback for Render deployment  
+try:
+    from werkzeug.security import generate_password_hash
+except ImportError:
+    print("Werkzeug not available - trying alternative import")
+    import hashlib
+    def generate_password_hash(password, method='pbkdf2:sha256'):
+        # Simple fallback hash if werkzeug fails
+        return hashlib.sha256(password.encode()).hexdigest()
 
 def emergency_db_setup():
     """Create database tables and demo users for Render"""
