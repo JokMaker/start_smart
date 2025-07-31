@@ -45,9 +45,14 @@ def ensure_database():
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 name TEXT NOT NULL,
-                user_type TEXT NOT NULL,
+                user_type TEXT NOT NULL CHECK(user_type IN ('student', 'mentor', 'recruiter', 'admin')),
+                bio TEXT,
+                skills TEXT,
+                location TEXT,
+                resume_file TEXT,
+                profile_image TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                is_active INTEGER DEFAULT 1
+                last_login TIMESTAMP
             )""")
             c.execute("""CREATE TABLE IF NOT EXISTS jobs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +60,7 @@ def ensure_database():
                 company TEXT NOT NULL,
                 description TEXT,
                 location TEXT,
-                salary_range TEXT,
+                salary TEXT,
                 job_type TEXT,
                 posted_by INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -330,7 +335,7 @@ def home():
     c.execute("SELECT COUNT(*) FROM users WHERE user_type = 'mentor'")
     mentor_count = c.fetchone()[0]
     
-    c.execute("""SELECT id, title, company, description, location, job_type, salary_range, 
+    c.execute("""SELECT id, title, company, description, location, job_type, salary, 
                  application_url, created_at FROM jobs 
                  WHERE is_active = 1
                  ORDER BY created_at DESC LIMIT 4""")
@@ -557,9 +562,9 @@ def register():
             print(f"🔐 Password hashed successfully for: {email}")
 
             # Insert new user with enhanced data
-            c.execute("""INSERT INTO users (email, password, name, user_type, created_at, is_active) 
-                         VALUES (?, ?, ?, ?, ?, ?)""",
-                     (email, password_hash, name, user_type, datetime.now(), 1))
+            c.execute("""INSERT INTO users (email, password, name, user_type, created_at) 
+                         VALUES (?, ?, ?, ?, ?)""",
+                     (email, password_hash, name, user_type, datetime.now()))
             conn.commit()
 
             new_user_id = c.lastrowid
@@ -795,7 +800,7 @@ def live_analytics():
     c = conn.cursor()
     
     # Get real platform statistics
-    c.execute("SELECT COUNT(*) FROM users WHERE is_active = 1")
+    c.execute("SELECT COUNT(*) FROM users")
     active_users = c.fetchone()[0]
     
     c.execute("SELECT COUNT(*) FROM jobs WHERE is_active = 1")
