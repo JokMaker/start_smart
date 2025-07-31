@@ -35,9 +35,10 @@ app.secret_key = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-produ
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Production Security Settings
+# Production Security Settings - Fixed for Render deployment
 if os.environ.get('FLASK_ENV') == 'production':
-    app.config['SESSION_COOKIE_SECURE'] = True
+    # Note: SESSION_COOKIE_SECURE disabled for Render deployment testing
+    # app.config['SESSION_COOKIE_SECURE'] = True  # Disabled temporarily
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
@@ -489,6 +490,9 @@ def login():
             c.execute("SELECT id, name, password, email, user_type FROM users WHERE LOWER(email) = ?", (email,))
             user = c.fetchone()
             
+            print(f"🔍 Login attempt for: {email}")  # Debug log
+            print(f"🔍 User found: {user is not None}")  # Debug log
+            
             if user and check_password_hash(user[2], password):
                 # Successful login
                 session['user_id'] = user[0]
@@ -513,6 +517,7 @@ def login():
                 next_page = request.args.get('next')
                 return redirect(next_page or url_for('dashboard'))
             else:
+                print(f"❌ Login failed for: {email}")  # Debug log
                 flash('Invalid email or password. Please try again.')
                 return render_template('login.html', form_data=request.form)
 
