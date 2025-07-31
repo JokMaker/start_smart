@@ -1772,6 +1772,19 @@ def check_session_security():
             return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    init_db()
+    # Ensure database is properly initialized
+    try:
+        init_db()
+        print("✅ Database initialized successfully")
+    except Exception as e:
+        print(f"⚠️ Database initialization error: {e}")
+        # Try manual database setup
+        try:
+            from fix_deployment import fix_deployment_database
+            fix_deployment_database()
+            print("✅ Manual database setup completed")
+        except Exception as e2:
+            print(f"❌ Manual database setup failed: {e2}")
+    
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
