@@ -122,17 +122,33 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <button class="btn btn-outline-primary w-100 mb-2">Manage Users</button>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <button class="btn btn-outline-success w-100 mb-2">Moderate Jobs</button>
                     </div>
                     <div class="col-md-3">
+                        <a href="{{ url_for('admin_fetch_jobs') }}" class="btn btn-gradient w-100 mb-2" id="fetchJobsBtn">
+                            <i class="fas fa-download me-1"></i>Fetch Jobs from API
+                        </a>
+                    </div>
+                    <div class="col-md-2">
                         <button class="btn btn-outline-warning w-100 mb-2">Review Startups</button>
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-outline-info w-100 mb-2">Export Data</button>
+                    </div>
+                </div>
+                
+                <!-- Job Fetch Status Section -->
+                <div class="row mt-3" id="jobFetchStatus" style="display: none;">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            <strong>Fetching jobs from Adzuna API...</strong>
+                            <br><small>This may take a few moments. Please wait...</small>
+                        </div>
                     </div>
                 </div>
             </div>

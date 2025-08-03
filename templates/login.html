@@ -3,24 +3,49 @@
 {% block title %}Welcome Back - StartSmart{% endblock %}
 
 {% block content %}
-<div class="auth-wrapper">
-    <div class="container-fluid">
-        <div class="row min-vh-100">
-            <!-- Left Side - Login Form -->
-            <div class="col-lg-6 auth-left-panel-login">
-                <div class="auth-form-container">
-                    <div class="auth-header text-center mb-5">
-                        <h1 class="auth-title">Welcome Back</h1>
+<div class="modern-auth-wrapper">
+    <div class="container">
+        <div class="row min-vh-100 align-items-center justify-content-center">
+            <!-- Logo and Branding -->
+            <div class="col-12 text-center mb-4">
+                <div class="auth-logo">
+                    <h1>StartSmart</h1>
+                    <div class="logo-divider">
+                        <span class="logo-line"></span>
+                        <span class="logo-dot"></span>
+                        <span class="logo-line"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Auth Card -->
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="auth-card">
+                    <div class="auth-header text-center mb-4">
+                        <h2 class="auth-title">Welcome Back</h2>
                         <p class="auth-subtitle">Sign in to continue your journey</p>
                     </div>
                     
+                    <!-- Registration Success Banner -->
+                    {% if request.args.get('registration_success') %}
+                        <div class="alert alert-success alert-dismissible fade show custom-alert registration-success mb-4" role="alert">
+                            <div class="text-center">
+                                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                <h4 class="alert-heading">Registration Successful!</h4>
+                                <p>Your account has been created successfully. Please log in with your new credentials.</p>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+                    
                     <!-- Flash Messages -->
-                    {% with messages = get_flashed_messages() %}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             <div class="alerts-container mb-4">
-                                {% for message in messages %}
-                                    <div class="alert alert-{{ 'success' if 'Welcome back' in message or 'Registration successful' in message else 'danger' }} alert-dismissible fade show custom-alert" role="alert">
-                                        <i class="fas fa-{{ 'check-circle' if 'Welcome back' in message or 'Registration successful' in message else 'exclamation-triangle' }} me-2"></i>
+                                {% for category, message in messages %}
+                                    {% set category = category if category != 'message' else 'info' %}
+                                    <div class="alert alert-{{ category }} alert-dismissible fade show custom-alert" role="alert">
+                                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
                                         {{ message }}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                     </div>
@@ -29,20 +54,37 @@
                         {% endif %}
                     {% endwith %}
                     
-                    <form method="POST" action="{{ url_for('login') }}" class="auth-form" id="loginForm">
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="alerts-container mb-4">
+                                {% for category, message in messages %}
+                                    {% set category = category if category != 'message' else 'info' %}
+                                    <div class="alert alert-{{ category }} alert-dismissible fade show custom-alert" role="alert">
+                                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('login') }}" class="auth-form" id="loginForm" novalidate>
                         <div class="mb-4">
-                            <div class="form-floating-modern">
-                                <input type="email" 
-                                       class="form-control" 
-                                       id="email" 
-                                       name="email" 
-                                       placeholder=" " 
-                                       required
-                                       autocomplete="email"
-                                       value="{{ request.form.email if request.form else '' }}">
-                                <label for="email">
-                                    <i class="fas fa-envelope me-2"></i>Email Address
-                                </label>
+                            <div class="modern-form-group">
+                                <label for="email">Email Address</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope icon-left"></i>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           name="email" 
+                                           placeholder="Enter your email" 
+                                           required
+                                           autocomplete="email"
+                                           value="{{ request.form.email if request.form else '' }}">
+                                </div>
                                 <div class="invalid-feedback">
                                     Please enter a valid email address
                                 </div>
@@ -50,28 +92,29 @@
                         </div>
                         
                         <div class="mb-4">
-                            <div class="form-floating-modern">
-                                <input type="password" 
-                                       class="form-control" 
-                                       id="password" 
-                                       name="password" 
-                                       placeholder=" " 
-                                       required
-                                       autocomplete="current-password">
-                                <label for="password">
-                                    <i class="fas fa-lock me-2"></i>Password
-                                </label>
-                                <button type="button" class="password-toggle" onclick="togglePassword()">
-                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
-                                </button>
+                            <div class="modern-form-group">
+                                <label for="password">Password</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-lock icon-left"></i>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           placeholder="Enter your password" 
+                                           required
+                                           autocomplete="current-password">
+                                    <button type="button" class="icon-right password-toggle" onclick="togglePassword()">
+                                        <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                    </button>
+                                </div>
                                 <div class="invalid-feedback">
                                     Please enter your password
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="row mb-4">
-                            <div class="col-md-6">
+                        <div class="row mb-4 align-items-center">
+                            <div class="col">
                                 <div class="form-check custom-checkbox">
                                     <input class="form-check-input" 
                                            type="checkbox" 
@@ -82,23 +125,31 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-md-6 text-end">
-                                <a href="{{ url_for('forgot_password') }}" class="text-primary forgot-password-link">Forgot password?</a>
+                            <div class="col text-end">
+                                <a href="{{ url_for('forgot_password') }}" class="forgot-link">Forgot password?</a>
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-4 submit-btn">
-                            <span class="btn-text">
-                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                            </span>
+                        <button type="submit" class="btn btn-primary w-100 mb-4 submit-btn">
+                            <span class="btn-text">Sign In</span>
                             <span class="btn-loading d-none">
-                                <i class="fas fa-spinner fa-spin me-2"></i>Signing In...
+                                <i class="fas fa-spinner fa-spin me-2"></i>Processing...
                             </span>
                         </button>
                         
-                        <div class="text-center">
+                        <div class="separator">
+                            <span>OR</span>
+                        </div>
+                        
+                        <div class="social-login">
+                            <button type="button" class="btn btn-outline-secondary social-btn">
+                                <i class="fab fa-google"></i> Continue with Google
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
                             <p class="mb-0">Don't have an account? 
-                                <a href="{{ url_for('register') }}" class="text-primary fw-bold">Create Account</a>
+                                <a href="{{ url_for('register') }}" class="register-link">Create Account</a>
                             </p>
                         </div>
                     </form>
@@ -508,6 +559,8 @@ function togglePassword() {
 }
 </script>
 
+<!-- Emergency Override for Testing -->
+<script src="{{ url_for('static', filename='js/emergency-override.js') }}"></script>
 <!-- Enhanced Form Validation -->
 <script src="{{ url_for('static', filename='js/form-validation.js') }}"></script>
 {% endblock %}
